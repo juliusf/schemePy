@@ -1,15 +1,16 @@
+from schemepy.scheme import *
 def _tokenize(input):
 	"""Tokenizes a given input string"""
 	return input.replace("(","( ").replace(")", " )").split()
 
 def _buildValue(value):
 	try:
-		return int(value)
+		return SchemeNumber(int(value))
 	except ValueError:
 		try:
-			return float(value)
+			return SchemeNumber(float(value))
 		except ValueError:
-			return value
+			return SchemeSymbol(value)
 
 def _parse_tokens(tokens):
 	"""generates executable syntax expression from a list of tokens"""
@@ -48,4 +49,4 @@ def _to_string_list(list):
 	return result.strip() + ")"
 
 def _to_string_expression(expr):
-	return str(expr)
+	return expr.to_string()

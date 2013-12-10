@@ -1,0 +1,64 @@
+class SchemeType:
+	def __eq__(a, b):
+		if not ( isinstance(a, SchemeType) and isinstance(b, SchemeType)):
+			return False
+		elif a.type != b.type:
+			return False
+		elif a.value != b.value:
+			return False
+		else:
+			return True
+
+
+class SchemeProcedure(SchemeType):
+	def __init__(self, name, impl):
+		self.name = name
+		self.impl = impl
+		self.type = "Procedure"
+	def to_string(self):
+		return '<Procedure:%s>' % self.name
+
+class SchemeString:
+	def __init__(self, value):
+		self.value = value
+		self.type = 'String'
+	def to_string(self):
+		return '"%s"' % (self.value)
+
+class SchemeNumber(SchemeType):
+	def __init__(self, value):
+		self.value = value
+		self.type = 'Number'
+	def to_string(self):
+		return '%s' % (self.value)
+
+class SchemeSymbol(SchemeType):
+	def __init__(self, value):
+		self.value = value
+		self.type = 'Symbol'
+	def to_string(self):
+		return '%s' % (self.value)
+
+
+class Enviornment:
+	def __init__(self, params = None, args = None , parentEnv=None):
+		self.parentEnv = parentEnv
+		self._dict = {}
+		if params != None and args != None:
+			self._dict = dict(zip(params, args))
+
+	def find(self, key):
+		val = self._dict.get(key)
+		if val != None:
+			return val
+		else:
+			if self.parentEnv != None:
+				return self.parentEnv.find(key)
+			else:
+				raise Exception("Undefined Symbol %s!" % (key))
+
+	def update(self, dict):
+		for key  in dict.keys():
+			self._dict[key] = dict[key]
+
+
