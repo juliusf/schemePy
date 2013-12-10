@@ -29,6 +29,8 @@ class SchemeNumber(SchemeType):
 	def __init__(self, value):
 		self.value = value
 		self.type = 'Number'
+	def impl(self, *args):
+		return self.value
 	def to_string(self):
 		return '%s' % (self.value)
 
@@ -40,7 +42,7 @@ class SchemeSymbol(SchemeType):
 		return '%s' % (self.value)
 
 
-class Enviornment:
+class environment:
 	def __init__(self, params = None, args = None , parentEnv=None):
 		self.parentEnv = parentEnv
 		self._dict = {}
@@ -61,4 +63,9 @@ class Enviornment:
 		for key  in dict.keys():
 			self._dict[key] = dict[key]
 
+	def set(self, key, value):
+		if key in self._dict:
+			raise Exception("%s has already been defined. Use set! to redefine")
+		else:
+			self._dict[key]=value
 
