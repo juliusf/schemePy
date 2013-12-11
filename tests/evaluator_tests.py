@@ -23,5 +23,9 @@ def test_variable_defines():
     expression = rd.parse("(begin (define x 5) 5)")
     assert_equal(ev.evaluate(expression).value, 5)
 
+def test_lamba():
+    expression = rd.parse("(begin (define z (lambda (x y) (+ x y))) (z 1 2))")
+    assert_equal(ev.evaluate(expression), SchemeNumber(3))
+
 
 

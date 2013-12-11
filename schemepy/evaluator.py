@@ -5,14 +5,13 @@ builtin_functions = dict()
 
 builtin_functions["+"] = SchemeProcedure("+", lambda *args: reduce(lambda x, y: SchemeNumber(x.value+y.value), args) )
 
-root_environment = environment() 
+root_environment = SchemeEnvironment()
 root_environment.update(builtin_functions)
 
 def evaluate(expression, environment=root_environment):
     """Evaluates an executable expression"""
     if isinstance(expression, list):
-        syntax = {'define':_syntax_define, 'begin':_syntax_begin}
-        
+        syntax = {'define':_syntax_define, 'begin':_syntax_begin, 'lambda':_syntax_lambda}
         if expression[0].value in syntax: #check whether the first element is syntax
             return syntax[expression[0].value](expression, environment)    #call syntax handler
         else:                        #else: run procedure
@@ -35,3 +34,7 @@ def _syntax_define(expression, environment):
         pass # TODO: IMPLEMENT
     else:
         environment.set(var.value, evaluate(expr[0], environment))
+
+def _syntax_lambda(expression, environment):
+    vars, expr = expression[1], expression[2]
+    return SchemeProcedure('lambda', lambda *args : evaluate(expr, SchemeEnvironment(vars, args, environment)) )

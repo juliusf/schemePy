@@ -8,6 +8,8 @@ class SchemeType:
             return False
         else:
             return True
+    def __repr__(self):
+        return "<%s:%s>" % (self.__class__.__name__, self.value)
 
 
 class SchemeProcedure(SchemeType):
@@ -42,12 +44,14 @@ class SchemeSymbol(SchemeType):
         return '%s' % (self.value)
 
 
-class environment:
+class SchemeEnvironment:
     def __init__(self, params = None, args = None , parentEnv=None):
         self.parentEnv = parentEnv
         self._dict = {}
+        values = []
         if params != None and args != None:
-            self._dict = dict(zip(params, args))
+            [values.append(vals.value) for vals in params] ##hacky
+            self._dict = dict(zip(values, args))
 
     def find(self, key):
         val = self._dict.get(key)
@@ -65,7 +69,7 @@ class environment:
 
     def set(self, key, value):
         if key in self._dict:
-            raise Exception("%s has already been defined. Use set! to redefine")
+            raise Exception("%s has already been defined. Use set! to redefine") % (key)
         else:
             self._dict[key]=value
 

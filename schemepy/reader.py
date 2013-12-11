@@ -38,7 +38,7 @@ def parse(input):
 
 def to_string(expression):
     if isinstance(expression, list):
-        return _to_string_list(expression) 
+        return _to_string_list(expression)
     else:
         return _to_string_expression(expression)
 
