@@ -24,7 +24,7 @@ def evaluate(expression, environment=root_environment):
         return expression    #schemeNumber
 
 def _syntax_begin(expression, environment):
-    expressions = expression[1:]
+    expressions = expression[1:] #maybe [1:]?
     exps = [evaluate(exp, environment) for exp in expressions]
     return exps[-1] #returns the last result of the begin statement
 

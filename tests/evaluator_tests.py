@@ -27,5 +27,11 @@ def test_lamba():
     expression = rd.parse("(begin (define z (lambda (x y) (+ x y))) (z 1 2))")
     assert_equal(ev.evaluate(expression), SchemeNumber(3))
 
+def test_higherorder_functions():
+    expression = rd.parse("(begin (define scons (lambda (x y) (lambda (m) (m x y)))) (define scar (lambda (z) (z (lambda (p q) p)))) (scar (scons 10 11)))")
+    assert_equal(ev.evaluate(expression), SchemeNumber(10))
 
+def test_enviornments():
+    expression = rd.parse("(begin (define x 3) (define fun (lambda (z) x)) (fun 1))")
+    assert_equal(ev.evaluate(expression), SchemeNumber(3))
 

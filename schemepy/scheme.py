@@ -19,6 +19,8 @@ class SchemeProcedure(SchemeType):
         self.type = "Procedure"
     def to_string(self):
         return '<Procedure:%s>' % self.name
+    def __repr__(self):
+        return "<%s:%s>" % (self.__class__.__name__, self.name)
 
 class SchemeString:
     def __init__(self, value):
@@ -69,7 +71,7 @@ class SchemeEnvironment:
 
     def set(self, key, value):
         if key in self._dict:
-            raise Exception("%s has already been defined. Use set! to redefine") % (key)
+            raise Exception("%s has already been defined. Use set! to redefine" % (key) )
         else:
             self._dict[key]=value
 
