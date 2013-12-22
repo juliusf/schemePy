@@ -5,9 +5,7 @@ import schemepy.reader as rd
 
 
 def setup_func():
-    ev._root_environment = SchemeEnvironment()
-    ev.root_environment.update(ev.builtin_functions)
-    print("assholr")
+    ev.reset_enviornment()
 
 @with_setup(setup_func)
 def test_single_expression_evaluation():
@@ -46,6 +44,6 @@ def test_higherorder_functions():
 
 @with_setup(setup_func)
 def test_enviornments():
-    expression = rd.parse("(begin (define x 3) (define fun (lambda (z) x)) (fun 1))")
+    expression = rd.parse("(begin (define b 3) (define fun (lambda (z) b)) (fun 1))")
     assert_equal(ev.evaluate(expression), SchemeNumber(3))
 

@@ -8,6 +8,11 @@ builtin_functions["+"] = SchemeProcedure("+", lambda *args: reduce(lambda x, y: 
 root_environment = SchemeEnvironment()
 root_environment.update(builtin_functions)
 
+def reset_enviornment():
+    global root_environment
+    root_environment =  SchemeEnvironment()
+    root_environment.update(builtin_functions)
+
 def evaluate(expression, environment=root_environment):
     """Evaluates an executable expression"""
     if isinstance(expression, list):
