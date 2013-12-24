@@ -51,13 +51,19 @@ class SchemeTrue(SchemeType):
     def __str__(self):
         return '#t'
 
-
 class SchemeFalse(SchemeType):
     def __init__(self):
         self.type = "SchemeFalse"
         self.value = "False"
     def __str__(self):
         return '#f'
+
+class SchemeNil(SchemeType):
+    def __init__(self):
+        self.type = "SchemeNil"
+        self.value = "Nil"
+    def __str__(self):
+        return "()"
 
 class SchemeCons(SchemeType):
     def __init__(self, car, cdr):

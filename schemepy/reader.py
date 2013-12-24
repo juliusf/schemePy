@@ -8,6 +8,8 @@ def _buildValue(value):
         return SchemeTrue()
     elif value == '#f':
         return SchemFalse()
+    elif value == "'()":
+        return SchemeNil()
     else:
         try:
             return SchemeNumber(int(value))
