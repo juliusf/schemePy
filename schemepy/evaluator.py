@@ -18,7 +18,15 @@ def reset_enviornment():
 def evaluate(expression, environment=root_environment):
     """Evaluates an executable expression"""
     if isinstance(expression, list):
-        syntax = {'define':_syntax_define, 'begin':_syntax_begin, 'lambda':_syntax_lambda, 'if':_syntax_if}
+        syntax = {
+            'define':_syntax_define,
+            'begin':_syntax_begin,
+            'lambda':_syntax_lambda,
+            'if':_syntax_if,
+            'cons':_syntax_cons,
+            'car':_syntax_car,
+            'cdr':_syntax_cdr
+        }
         if expression[0].value in syntax: #check whether the first element is syntax
             return syntax[expression[0].value](expression, environment)    #call syntax handler
         else:                        #else: run procedure
@@ -31,11 +39,13 @@ def evaluate(expression, environment=root_environment):
         return expression    #schemeNumber
 
 def _syntax_begin(expression, environment):
-    expressions = expression[1:] #maybe [1:]?
+    expressions = expression[1:]
     exps = [evaluate(exp, environment) for exp in expressions]
     return exps[-1] #returns the last result of the begin statement
 
 def _syntax_define(expression, environment):
+    if len(expression) != 3:
+        raise SchemeException("define: define expects exactly 2 arguments: define <variable> <value>")
     var, expr = expression[1], expression[2:]
     if isinstance(var, list): #shorthand lambda syntax
         pass # TODO: IMPLEMENT
@@ -43,11 +53,43 @@ def _syntax_define(expression, environment):
         environment.set(var.value, evaluate(expr[0], environment))
 
 def _syntax_lambda(expression, environment):
+    if len(expression) != 3:
+        raise SchemeException("lambda: lambda expects exactly to 2 arguments: lambda <variables> <implementation>")
     vars, expr = expression[1], expression[2]
     return SchemeProcedure('lambda', lambda *args : evaluate(expr, SchemeEnvironment(vars, args, environment)) )
 
 def _syntax_if(expression, environment):
     if len(expression) != 4:
-        raise SchemeException("if: invalid syntax. if expects exactly 3 arguments: if <condition> <truePath> <falsePath>")
+        raise SchemeException("if: if expects exactly 3 arguments: if <condition> <truePath> <falsePath>")
     condition, true_path, false_path = expression[1], expression[2], expression[3]
     return evaluate(true_path, environment) if evaluate(condition, environment) == SchemeTrue() else evaluate(false_path, environment)
+
+def _syntax_cons(expression, environment):
+    if len (expression) != 3:
+        raise SchemeException("cons: cons expects exactly 2 arguments: cons <car> <cdr>")
+    car, cdr = expression[1], expression[2]
+    return SchemeCons(car, cdr)
+
+def _syntax_car(expression, enviornment):
+    if len (expression) != 2:
+        raise SchemeException("car: car expects exactly 2 arguments: car <cons>")
+    cons = evaluate(expression[1], enviornment)
+    print(expression)
+    if not isinstance(cons, SchemeCons):
+        raise SchemeException("car: car expects a SchemeCons as first parameter. Got a %s instead." % (cons))
+    return evaluate(cons.car, enviornment)
+
+def _syntax_cdr(expression, enviornment):
+    if len (expression) != 2:
+        raise SchemeException("cdr: cdr expects exactly 2 arguments: cdr <cons>")
+    cons = evaluate(expression[1], enviornment)
+    if not isinstance(cons, SchemeCons):
+        raise SchemeException("cdr: cdr expects a SchemeCons as first parameter. Got a %s instead." % (cons))
+    return evaluate(cons.cdr, enviornment)
+
+
+
+
+
+
+

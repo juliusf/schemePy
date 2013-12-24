@@ -12,33 +12,43 @@ def test_SchemeProcedure():
     assert_equal(proc.name, 'test_procedure')
     assert_equal(proc.impl, ['+', 1, 2])
     assert_equal(proc.type, "Procedure")
-    assert_equal(proc.to_string(), "<Procedure:test_procedure>")
+    assert_equal(str(proc), "<Procedure:test_procedure>")
 
 @with_setup(setup_func)
 def test_SchemeString():
     string = SchemeString('test_string')
     assert_equal(string.value, 'test_string')
     assert_equal(string.type, "String")
-    assert_equal(string.to_string(), '"test_string"')
+    assert_equal( str(string), '"test_string"')
 
 @with_setup(setup_func)
 def test_SchemeNumber():
     number = SchemeNumber(3)
     assert_equal(number.value, 3)
     assert_equal(number.type, "Number")
-    assert_equal(number.to_string(), '3')
+    assert_equal(str(number), '3')
 
 @with_setup(setup_func)
 def test_SchemeBoolean():
     true = SchemeTrue()
     assert_equal(true, SchemeTrue())
-    assert_equal(true.to_string(), "#t")
+    assert_equal(str(true), "#t")
 
     false = SchemeFalse()
     assert_equal(false, SchemeFalse())
-    assert_equal(false.to_string(), "#f")
+    assert_equal(str(false), "#f")
 
     assert_true(true != false)
+
+@with_setup(setup_func)
+def test_SchemeCons():
+    cons = SchemeCons(1,2)
+    assert_equal(cons.type, "SchemeCons")
+    assert_equal(cons.car, 1)
+    assert_equal(cons.cdr, 2)
+
+    cons2 = SchemeCons(3, cons)
+    assert_equal(str(cons2), "(3 . (1 . 2))")
 
 @with_setup(setup_func)
 def test_environment_find():

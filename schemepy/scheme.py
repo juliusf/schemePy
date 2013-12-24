@@ -16,7 +16,7 @@ class SchemeProcedure(SchemeType):
         self.name = name
         self.impl = impl
         self.type = "Procedure"
-    def to_string(self):
+    def __str__(self):
         return '<Procedure:%s>' % self.name
     def __repr__(self):
         return "<%s:%s>" % (self.__class__.__name__, self.name)
@@ -25,7 +25,7 @@ class SchemeString:
     def __init__(self, value):
         self.value = value
         self.type = 'String'
-    def to_string(self):
+    def __str__(self):
         return '"%s"' % (self.value)
 
 class SchemeNumber(SchemeType):
@@ -34,21 +34,21 @@ class SchemeNumber(SchemeType):
         self.type = 'Number'
     def impl(self, *args):
         return self.value
-    def to_string(self):
+    def __str__(self):
         return '%s' % (self.value)
 
 class SchemeSymbol(SchemeType):
     def __init__(self, value):
         self.value = value
         self.type = 'Symbol'
-    def to_string(self):
+    def __str__(self):
         return '%s' % (self.value)
 
 class SchemeTrue(SchemeType):
     def __init__(self):
         self.type = "SchemeTrue"
         self.value = "True"
-    def to_string(self):
+    def __str__(self):
         return '#t'
 
 
@@ -56,8 +56,25 @@ class SchemeFalse(SchemeType):
     def __init__(self):
         self.type = "SchemeFalse"
         self.value = "False"
-    def to_string(self):
+    def __str__(self):
         return '#f'
+
+class SchemeCons(SchemeType):
+    def __init__(self, car, cdr):
+        self.car = car
+        self.cdr = cdr
+        self.type = "SchemeCons"
+    def __str__(self):
+        return "(%s . %s)" % (self.car, self.cdr)
+    def __eq__(a, b):
+        if not ( isinstance(a, SchemeCons) and isinstance(b, SchemeCons)):
+            return False
+        elif a.car != b.car or a.cdr != b.cdr:
+            return False
+        else:
+            return True
+    def __repr__(self):
+        return "<SchemeCons: (%s.%s)>" % (self.car.to_string(), self.cdr.to_string())
 
 class SchemeException(Exception):
     pass

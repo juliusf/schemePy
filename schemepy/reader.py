@@ -54,4 +54,4 @@ def _to_string_list(list):
     return result.strip() + ")"
 
 def _to_string_expression(expr):
-    return expr.to_string()
+    return str(expr)

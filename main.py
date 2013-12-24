@@ -1,3 +1,4 @@
+#/usr/local/bin/python3
 import schemepy.reader as rd
 import schemepy.evaluator as ev
 from schemepy.scheme import *
