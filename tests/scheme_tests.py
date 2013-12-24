@@ -32,11 +32,11 @@ def test_SchemeNumber():
 def test_SchemeBoolean():
     true = SchemeTrue()
     assert_equal(true, SchemeTrue())
-    assert_equal(true.to_string(), "<SchemeTrue>")
+    assert_equal(true.to_string(), "#t")
 
     false = SchemeFalse()
     assert_equal(false, SchemeFalse())
-    assert_equal(false.to_string(), "<SchemeFalse>")
+    assert_equal(false.to_string(), "#f")
 
     assert_true(true != false)
 

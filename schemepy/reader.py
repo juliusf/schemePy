@@ -4,13 +4,18 @@ def _tokenize(input):
     return input.replace("(","( ").replace(")", " )").split()
 
 def _buildValue(value):
-    try:
-        return SchemeNumber(int(value))
-    except ValueError:
+    if value == '#t':
+        return SchemeTrue()
+    elif value == '#f':
+        return SchemFalse()
+    else:
         try:
-            return SchemeNumber(float(value))
+            return SchemeNumber(int(value))
         except ValueError:
-            return SchemeSymbol(value)
+            try:
+                return SchemeNumber(float(value))
+            except ValueError:
+                return SchemeSymbol(value)
 
 def _parse_tokens(tokens):
     """generates executable syntax expression from a list of tokens"""

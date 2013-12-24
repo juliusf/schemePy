@@ -1,6 +1,12 @@
 import schemepy.reader as rd
 import schemepy.evaluator as ev
+from schemepy.scheme import *
+import sys
 
-ast = rd.parse("(begin (define x 3) (define fun (lambda (z) x)) (fun 1))")
-ret = ev.evaluate(ast)
-print(ret)
+
+while True:
+    try:
+        expression = rd.parse(input('>'))
+        print(ev.evaluate(expression).to_string())
+    except SchemeException as e:
+        print(e)

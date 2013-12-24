@@ -18,7 +18,7 @@ def reset_enviornment():
 def evaluate(expression, environment=root_environment):
     """Evaluates an executable expression"""
     if isinstance(expression, list):
-        syntax = {'define':_syntax_define, 'begin':_syntax_begin, 'lambda':_syntax_lambda}
+        syntax = {'define':_syntax_define, 'begin':_syntax_begin, 'lambda':_syntax_lambda, 'if':_syntax_if}
         if expression[0].value in syntax: #check whether the first element is syntax
             return syntax[expression[0].value](expression, environment)    #call syntax handler
         else:                        #else: run procedure
@@ -45,3 +45,9 @@ def _syntax_define(expression, environment):
 def _syntax_lambda(expression, environment):
     vars, expr = expression[1], expression[2]
     return SchemeProcedure('lambda', lambda *args : evaluate(expr, SchemeEnvironment(vars, args, environment)) )
+
+def _syntax_if(expression, environment):
+    if len(expression) != 4:
+        raise SchemeException("if: invalid syntax. if expects exactly 3 arguments: if <condition> <truePath> <falsePath>")
+    condition, true_path, false_path = expression[1], expression[2], expression[3]
+    return evaluate(true_path, environment) if evaluate(condition, environment) == SchemeTrue() else evaluate(false_path, environment)

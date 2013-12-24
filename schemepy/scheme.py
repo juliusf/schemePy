@@ -49,7 +49,7 @@ class SchemeTrue(SchemeType):
         self.type = "SchemeTrue"
         self.value = "True"
     def to_string(self):
-        return '<SchemeTrue>'
+        return '#t'
 
 
 class SchemeFalse(SchemeType):
@@ -57,9 +57,10 @@ class SchemeFalse(SchemeType):
         self.type = "SchemeFalse"
         self.value = "False"
     def to_string(self):
-        return '<SchemeFalse>'
+        return '#f'
 
-
+class SchemeException(Exception):
+    pass
 
 class SchemeEnvironment:
     def __init__(self, params = None, args = None , parentEnv=None):
@@ -78,7 +79,7 @@ class SchemeEnvironment:
             if self.parentEnv != None:
                 return self.parentEnv.find(key)
             else:
-                raise Exception("Undefined Symbol %s!" % (key))
+                raise SchemeException("Undefined Symbol %s!" % (key))
 
     def update(self, dict):
         for key  in dict.keys():
@@ -86,7 +87,7 @@ class SchemeEnvironment:
 
     def set(self, key, value):
         if key in self._dict:
-            raise Exception("%s has already been defined. Use set! to redefine" % (key) )
+            raise SchemeException("%s has already been defined. Use set! to redefine" % (key) )
         else:
             self._dict[key]=value
 

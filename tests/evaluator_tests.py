@@ -51,10 +51,16 @@ def test_enviornments():
 def test_equals():
     expression = rd.parse("(= 3 3)")
     assert_equal(ev.evaluate(expression), SchemeTrue())
-
     expression = rd.parse("(= 3 1)")
     assert_equal(ev.evaluate(expression), SchemeFalse())
-
     expression = rd.parse("(= 3 3 3)")
     assert_equal(ev.evaluate(expression), SchemeTrue())
+    expression = rd.parse("(= 3 1 1)")
+    assert_equals(ev.evaluate(expression), SchemeFalse())
 
+@with_setup(setup_func)
+def test_if():
+    expression = rd.parse("(if (= 3 3) 1 2)")
+    assert_equal(ev.evaluate(expression), SchemeNumber(1))
+    expression = rd.parse("(if (= 3 1) 1 2)")
+    assert_equal(ev.evaluate(expression), SchemeNumber(2))
