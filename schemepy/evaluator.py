@@ -4,6 +4,8 @@ from functools import reduce
 builtin_functions = dict()
 
 builtin_functions["+"] = SchemeProcedure("+", lambda *args: reduce(lambda x, y: SchemeNumber(x.value+y.value), args) )
+builtin_functions["="] = SchemeProcedure("=", lambda *args: reduce(lambda x ,y: SchemeTrue() if (x== SchemeTrue() and y== SchemeTrue() ) else SchemeFalse(), map(lambda x: SchemeFalse() if x != args[0] else SchemeTrue(), args[1:])))
+
 
 root_environment = SchemeEnvironment()
 root_environment.update(builtin_functions)

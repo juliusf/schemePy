@@ -47,3 +47,14 @@ def test_enviornments():
     expression = rd.parse("(begin (define b 3) (define fun (lambda (z) b)) (fun 1))")
     assert_equal(ev.evaluate(expression), SchemeNumber(3))
 
+@with_setup(setup_func)
+def test_equals():
+    expression = rd.parse("(= 3 3)")
+    assert_equal(ev.evaluate(expression), SchemeTrue())
+
+    expression = rd.parse("(= 3 1)")
+    assert_equal(ev.evaluate(expression), SchemeFalse())
+
+    expression = rd.parse("(= 3 3 3)")
+    assert_equal(ev.evaluate(expression), SchemeTrue())
+

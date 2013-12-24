@@ -11,7 +11,6 @@ class SchemeType:
     def __repr__(self):
         return "<%s:%s>" % (self.__class__.__name__, self.value)
 
-
 class SchemeProcedure(SchemeType):
     def __init__(self, name, impl):
         self.name = name
@@ -44,6 +43,22 @@ class SchemeSymbol(SchemeType):
         self.type = 'Symbol'
     def to_string(self):
         return '%s' % (self.value)
+
+class SchemeTrue(SchemeType):
+    def __init__(self):
+        self.type = "SchemeTrue"
+        self.value = "True"
+    def to_string(self):
+        return '<SchemeTrue>'
+
+
+class SchemeFalse(SchemeType):
+    def __init__(self):
+        self.type = "SchemeFalse"
+        self.value = "False"
+    def to_string(self):
+        return '<SchemeFalse>'
+
 
 
 class SchemeEnvironment:

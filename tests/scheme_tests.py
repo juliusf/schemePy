@@ -29,9 +29,23 @@ def test_SchemeNumber():
     assert_equal(number.to_string(), '3')
 
 @with_setup(setup_func)
+def test_SchemeBoolean():
+    true = SchemeTrue()
+    assert_equal(true, SchemeTrue())
+    assert_equal(true.to_string(), "<SchemeTrue>")
+
+    false = SchemeFalse()
+    assert_equal(false, SchemeFalse())
+    assert_equal(false.to_string(), "<SchemeFalse>")
+
+    assert_true(true != false)
+
+@with_setup(setup_func)
 def test_environment_find():
     env = SchemeEnvironment([SchemeSymbol('a')], [1])
     assert_equal(1, env.find(SchemeSymbol('a').value))
+
+    assert_raises(Exception, env.find, 'foo')
 
 @with_setup(setup_func)
 def test_environment_find_complex():
@@ -39,6 +53,11 @@ def test_environment_find_complex():
     env = SchemeEnvironment([SchemeSymbol('b')], [2], parent_env)
     assert_equal(1, env.find(SchemeSymbol('a').value))
     assert_raises(Exception, env.find, SchemeSymbol('c'))
+
+@with_setup(setup_func)
+def test_enviornment_set_double():
+    env = SchemeEnvironment([SchemeSymbol('a')], [1])
+    assert_raises(Exception, env.set, 'a', [2])
 
 @with_setup(setup_func)
 def test_environment_update():
