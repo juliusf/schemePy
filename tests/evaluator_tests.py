@@ -31,7 +31,10 @@ def test_multi_line_evaluation():
 def test_variable_defines():
     expression = rd.parse("(begin (define x 5) x)")
     assert_equal(ev.evaluate(expression).value, 5)
-
+@with_setup(setup_func)
+def test_define_exception():
+    expression = rd.parse("(define x)")
+    assert_raises(SchemeException, ev.evaluate, expression)
 @with_setup(setup_func)
 def test_lamba():
     expression = rd.parse("(begin (define z (lambda (x y) (+ x y))) (z 1 2))")
@@ -115,3 +118,8 @@ def test_cdr_exception():
 
     expression = rd.parse('(cdr 1)')
     assert_raises(SchemeException, ev.evaluate, expression)
+
+@with_setup(setup_func)
+def test_let():
+    expression = rd.parse("(let ((a 1) (b 1)) (+ a b))")
+    assert_equal(ev.evaluate(expression), SchemeNumber(2))

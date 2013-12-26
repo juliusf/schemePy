@@ -25,7 +25,8 @@ def evaluate(expression, environment=root_environment):
             'if':_syntax_if,
             'cons':_syntax_cons,
             'car':_syntax_car,
-            'cdr':_syntax_cdr
+            'cdr':_syntax_cdr,
+            'let':_syntax_let
         }
         if expression[0].value in syntax: #check whether the first element is syntax
             return syntax[expression[0].value](expression, environment)    #call syntax handler
@@ -86,6 +87,16 @@ def _syntax_cdr(expression, enviornment):
     if not isinstance(cons, SchemeCons):
         raise SchemeException("cdr: cdr expects a SchemeCons as first parameter. Got a %s instead." % (cons))
     return evaluate(cons.cdr, enviornment)
+
+def _syntax_let(expression, enviornment):
+    if len(expression) != 3:
+        raise SchemeException("let: let expects exactly two parameters: let <variable definitions> <implementation>")
+    defs, impl = expression[1], expression[2]
+    newEnv = SchemeEnvironment(None, None, enviornment)
+    for expr in defs:
+        newEnv.set(str(expr[0]), expr[1])
+    return evaluate(impl, newEnv)
+
 
 
 

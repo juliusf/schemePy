@@ -7,7 +7,8 @@ import sys
 
 while True:
     try:
-        expression = rd.parse(input('>'))
-        print(ev.evaluate(expression).to_string())
+        #expression = rd.parse(input('>'))
+        expression = rd.parse("(let ((a 1) (b 1)) (+ a b))")
+        print(ev.evaluate(expression))
     except SchemeException as e:
         print(e)
