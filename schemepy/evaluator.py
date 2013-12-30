@@ -94,7 +94,7 @@ def _syntax_let(expression, enviornment):
     defs, impl = expression[1], expression[2]
     newEnv = SchemeEnvironment(None, None, enviornment)
     for expr in defs:
-        newEnv.set(str(expr[0]), expr[1])
+        newEnv.set(expr[0].value, expr[1])
     return evaluate(impl, newEnv)
 
 
