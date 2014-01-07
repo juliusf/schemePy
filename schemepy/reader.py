@@ -7,7 +7,7 @@ def _buildValue(value):
     if value == '#t':
         return SchemeTrue()
     elif value == '#f':
-        return SchemFalse()
+        return SchemeFalse()
     elif value == "'()":
         return SchemeNil()
     else:
