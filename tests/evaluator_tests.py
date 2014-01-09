@@ -19,8 +19,8 @@ def test_nested_expression_evaluation():
 
 @with_setup(setup_func)
 def test_primitive_evaluation():
-    expression = [SchemeNumber(1)]
-    assert_equal(ev.evaluate(expression), 1)
+    expression = SchemeNumber(1)
+    assert_equal(ev.evaluate(expression), SchemeNumber(1))
 
 @with_setup(setup_func)
 def test_multi_line_evaluation():
@@ -49,7 +49,7 @@ def test_lambda_exception():
 
 @with_setup(setup_func)
 def test_lambda_no_params():
-    expression = rd.parse("(begin (define foo (lambda () (+ 1 1))) (foo)) ")
+    expression = rd.parse("(begin (define func (lambda () (+ 1 1))) (func)) ")
     assert_equal(ev.evaluate(expression), SchemeNumber(2))
 
 @with_setup(setup_func)
@@ -174,7 +174,10 @@ def test_if_exception():
 @with_setup(setup_func)
 def test_cons():
     expression = rd.parse("(cons 1 2)")
-    assert_equal = (ev.evaluate(expression), SchemeCons(1,2))
+    exp = ev.evaluate(expression)
+    assert_true(ev.evaluate(expression) == SchemeCons(SchemeNumber(1),SchemeNumber(2)))
+    expression= rd.parse("(cons (+ 1 2) (+ 3 4 ))")
+    assert_equal(ev.evaluate(expression), SchemeCons(SchemeNumber(3), SchemeNumber(7)))
 
 @with_setup(setup_func)
 def test_cons_exception():
@@ -217,8 +220,8 @@ def test_let():
 def test_set_test():
     define_singleton_set = rd.parse("(define singletonSet (lambda (x) (lambda (y) (= y x))))")
     define_contains = rd.parse("(define contains (lambda (set_ y) (set_ y)))")
-    define_test_sets = rd.parse("""(begin 
-        (define s1 (singletonSet 1)) 
+    define_test_sets = rd.parse("""(begin
+        (define s1 (singletonSet 1))
         (define s2 (singletonSet 2))
         (define s3 (lambda (x) (and (>= x 5) (<= x 15))))
         (define s4 (lambda (x) (and (<= x -5) (>= x -15))))
@@ -239,3 +242,57 @@ def test_set_test():
     assert_equal(ev.evaluate(test_3), SchemeTrue())
     assert_equal(ev.evaluate(test_4), SchemeTrue())
     assert_equal(ev.evaluate(test_5), SchemeFalse())
+
+
+@with_setup(setup_func)
+def test_list_eval():
+    define_list = rd.parse("""
+    (begin (define foo (lambda () 4))
+            (define bar (lambda () foo))
+
+            ((bar)))
+    """)
+    assert_equal(ev.evaluate(define_list), SchemeNumber(4))
+
+@with_setup(setup_func)
+def test_list_no_exec():
+    define_list = rd.parse("""
+    (begin
+            (define bar (lambda () (cons 1 2))
+
+            ((bar))))
+    """)
+    assert_raises(SchemeException, ev.evaluate, define_list)
+
+
+@with_setup(setup_func)
+def test_Y_combinator():
+    define_y = rd.parse("""
+            (begin
+            (define Y
+             (lambda (f)
+             ((lambda (x) (x x))
+             (lambda (g)
+             (f (lambda (x) ((g g) x)))))))
+               (define fac
+                 (Y
+                   (lambda (f)
+                     (lambda (x)
+                       (if (< x 2)
+                           1
+                           (* x (f (- x 1)))))))))
+""")
+    define_test = rd.parse("(fac 6)")
+    ev.evaluate(define_y)
+
+    assert_equal(ev.evaluate(define_test), SchemeNumber(720))
+
+
+@with_setup(setup_func)
+def test_iota():
+    define_iota = rd.parse("""(define iota (lambda (start end step) (begin (define helper (lambda (cur list) (if (= cur start) list (helper (- cur step) (cons cur list))))) (helper end '()))))""")
+    define_test = rd.parse("(iota 10 1 -1)")
+
+    ev.evaluate(define_iota)
+
+    assert_equal(str(ev.evaluate(define_test)), "(9 8 7 6 5 4 3 2 1)")

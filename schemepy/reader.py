@@ -1,15 +1,17 @@
 from schemepy.scheme import *
+import re
+
 def _tokenize(input):
     """Tokenizes a given input string"""
-    return input.replace("(","( ").replace(")", " )").split()
+    return input.replace("("," ( ").replace(")", " ) ").split()
+
+
 
 def _buildValue(value):
     if value == '#t':
         return SchemeTrue()
     elif value == '#f':
         return SchemeFalse()
-    elif value == "'()":
-        return SchemeNil()
     else:
         try:
             return SchemeNumber(int(value))
@@ -41,7 +43,7 @@ def _parse_tokens(tokens):
 
 def parse(input):
     """converts a string to a executable syntax expression"""
-    return _parse_tokens(_tokenize(input))
+    return _parse_tokens(_tokenize(_preprocess(input)))
 
 def to_string(expression):
     if isinstance(expression, list):
@@ -57,3 +59,10 @@ def _to_string_list(list):
 
 def _to_string_expression(expr):
     return str(expr)
+
+def _preprocess(input):
+    input = re.sub(r";.*\n | \n | \r | \t", " ", input) #remove quotes, new lines, whitespaces and tabs
+    return re.sub(r"'(.[^\s)]*)", r'(quote \1)', input) #replace ' with quote
+
+
+

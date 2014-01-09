@@ -46,9 +46,10 @@ def test_SchemeCons():
     assert_equal(cons.type, "SchemeCons")
     assert_equal(cons.car, 1)
     assert_equal(cons.cdr, 2)
-
-    cons2 = SchemeCons(3, cons)
-    assert_equal(str(cons2), "(3 . (1 . 2))")
+    cons = SchemeCons( 1, SchemeCons(2, 3))
+    assert_equal(str(cons), "(1 2 . 3)")
+    cons = SchemeCons(1, SchemeCons(2, SchemeNil()))
+    assert_equal(str(cons), "(1 2)")
 
 @with_setup(setup_func)
 def test_environment_find():
@@ -75,3 +76,7 @@ def test_environment_update():
     dict = {SchemeSymbol('a').value:2}
     root_env.update(dict)
     assert_equal(root_env.find('a'),2)
+
+@with_setup(setup_func)
+def test_eq_operator():
+    assert_equal(SchemeNumber(1), SchemeNumber(1))

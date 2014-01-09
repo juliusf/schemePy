@@ -71,19 +71,49 @@ class SchemeCons(SchemeType):
         self.cdr = cdr
         self.type = "SchemeCons"
     def __str__(self):
-        return "(%s . %s)" % (self.car, self.cdr)
-    def __eq__(a, b):
-        if not ( isinstance(a, SchemeCons) and isinstance(b, SchemeCons)):
+        ret = "("
+        if isinstance(self.car, SchemeCons):
+            ret += self._str_helper()
+        else:
+            ret +=  str(self.car)
+        if isinstance(self.cdr, SchemeNil):
+            return ret + ")"
+        if isinstance(self.cdr, SchemeCons):
+            return ret + " " + self.cdr._str_helper()
+        else:
+            return ret + (". %s)" % (self.cdr))
+
+    def _str_helper(self):
+        ret = ""
+        if isinstance(self.car, SchemeCons):
+            ret += self._str_helper()
+        else:
+            ret +=  str(self.car)
+        if isinstance(self.cdr, SchemeNil):
+            return ret + ")"
+        if isinstance(self.cdr, SchemeCons):
+            return ret + " " + self.cdr._str_helper()
+        else:
+            return ret + (" . %s)" % (self.cdr))
+
+
+    def __eq__(self, other):
+        if not ( isinstance(self, SchemeCons) and isinstance(other, SchemeCons)):
             return False
-        elif a.car != b.car or a.cdr != b.cdr:
+        elif self.car != other.car or self.cdr != other.cdr:
             return False
         else:
             return True
     def __repr__(self):
-        return "<SchemeCons: (%s.%s)>" % (self.car.to_string(), self.cdr.to_string())
+        return "<SchemeCons: (%s.%s)>" % (self.car, self.cdr)
+
+
+
+
 
 class SchemeException(Exception):
     pass
+
 
 class SchemeEnvironment:
     def __init__(self, params = None, args = None , parentEnv=None):
@@ -112,5 +142,10 @@ class SchemeEnvironment:
         if key in self._dict:
             raise SchemeException("%s has already been defined. Use set! to redefine" % (key) )
         else:
+            self._dict[key]=value
+
+
+class SchemeRootEnviornment(SchemeEnvironment):
+    def set(self, key, value):
             self._dict[key]=value
 
