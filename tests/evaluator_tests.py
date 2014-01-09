@@ -1,11 +1,13 @@
+import imp
 from nose.tools import *
 from schemepy.scheme import *
+import schemepy
 import schemepy.evaluator as ev
 import schemepy.reader as rd
 
 
 def setup_func():
-    ev.reset_enviornment()
+    ev = imp.reload(schemepy)
 
 @with_setup(setup_func)
 def test_single_expression_evaluation():
@@ -215,6 +217,9 @@ def test_let():
     expression = rd.parse("(let ((a 1) (b 1)) (+ a b))")
     assert_equal(ev.evaluate(expression), SchemeNumber(2))
 
+@with_setup(setup_func)
+def test_shorthand_lambda():
+    define_short = rd.parse("(define (test (a b) (+ a b)))")
 
 @with_setup(setup_func)
 def test_set_test():
@@ -259,7 +264,6 @@ def test_list_no_exec():
     define_list = rd.parse("""
     (begin
             (define bar (lambda () (cons 1 2))
-
             ((bar))))
     """)
     assert_raises(SchemeException, ev.evaluate, define_list)

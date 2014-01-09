@@ -1,10 +1,11 @@
 from nose.tools import *
+import schemepy
+import imp
 from schemepy.scheme import *
 import schemepy.evaluator as ev
 
 def setup_func():
-    ev._root_environment = SchemeEnvironment()
-    ev.root_environment.update(ev.builtin_functions)
+    ev = imp.reload(schemepy)
 
 @with_setup(setup_func)
 def test_SchemeProcedure():
