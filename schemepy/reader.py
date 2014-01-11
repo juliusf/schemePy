@@ -3,7 +3,10 @@ import re
 
 def _tokenize(input):
     """Tokenizes a given input string"""
-    return input.replace("("," ( ").replace(")", " ) ").split()
+    tokens = input.replace("("," ( ").replace(")", " ) ").split()
+    if len(tokens) == 3:
+        raise SchemeException("Unexpected EOF")
+    return tokens
 
 
 
@@ -23,7 +26,7 @@ def _buildValue(value):
 
 def _parse_tokens(tokens):
     """generates executable syntax expression from a list of tokens"""
-    if len(tokens) == 2:
+    if len(tokens) == 0:
         raise SchemeException("Unexpected EOF")
     token = tokens.pop(0)
     if token == "(":

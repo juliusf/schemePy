@@ -1,5 +1,6 @@
 from schemepy.scheme import *
 from functools import reduce
+import sys
 
 builtin_functions = dict()
 
@@ -42,7 +43,8 @@ def evaluate(expression, environment=root_environment):
             'car':_syntax_car,
             'cdr':_syntax_cdr,
             'let':_syntax_let,
-            'quote': _syntax_quote
+            'quote': _syntax_quote,
+            'exit': _syntax_exit
         }
         if isinstance(expression[0], list):
             to_execute = evaluate(expression[0], environment)
@@ -132,7 +134,8 @@ def _syntax_quote(expression, enviornment):
 
     return SchemeNil() if isinstance(expression[1], list) and len(expression[1]) == 0 else expression[1:]
 
+def _syntax_exit(expression, enviornment):
+    sys.exit(0)
 def _make_scheme_bool(cond):
     return SchemeTrue() if cond else SchemeFalse()
-
 
