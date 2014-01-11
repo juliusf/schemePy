@@ -31,8 +31,10 @@ def _parse_tokens(tokens):
     token = tokens.pop(0)
     if token == "(":
         values = []
-        while tokens[0] != ')':
+        while len(tokens) > 0 and tokens[0] != ')':
             values.append(_parse_tokens(tokens))
+        if len(tokens) == 0:
+            raise SchemeException("Unexpected EOF")
         tokens.pop(0)
         return values
     else:
