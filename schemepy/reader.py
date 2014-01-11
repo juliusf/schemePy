@@ -23,16 +23,10 @@ def _buildValue(value):
 
 def _parse_tokens(tokens):
     """generates executable syntax expression from a list of tokens"""
-    if len(tokens) == 0:
-        raise SyntaxError("Unexpected EOF")
+    if len(tokens) == 2:
+        raise SchemeException("Unexpected EOF")
     token = tokens.pop(0)
     if token == "(":
-        values = []
-        while tokens[0] != ')':
-            values.append(_parse_tokens(tokens))
-        tokens.pop(0)
-        return values
-    elif token == "\'(":    #TODO: Quotes
         values = []
         while tokens[0] != ')':
             values.append(_parse_tokens(tokens))
@@ -62,7 +56,8 @@ def _to_string_expression(expr):
 
 def _preprocess(input):
     input = re.sub(r";.*\n | \n | \r | \t", " ", input) #remove quotes, new lines, whitespaces and tabs
-    return re.sub(r"'(.[^\s)]*)", r'(quote \1)', input) #replace ' with quote
+    input = re.sub(r"'(.[^\s)]*)", r'(quote \1)', input) #replace ' with quote
+    return "(begin " + input + ")" #implicit multiline evaluation
 
 
 

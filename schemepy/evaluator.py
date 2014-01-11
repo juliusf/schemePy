@@ -29,6 +29,9 @@ def reset_enviornment():
 def evaluate(expression, environment=root_environment):
     """Evaluates an executable expression"""
     if isinstance(expression, list):
+        if len(expression) == 0:
+            raise SchemeException("Syntax Error!")
+
         to_execute = expression[0]
         syntax = {
             'define':_syntax_define,
@@ -60,6 +63,8 @@ def evaluate(expression, environment=root_environment):
         return expression    #schemeNumber
 
 def _syntax_begin(expression, environment):
+    if len(expression) < 2:
+        raise SchemeException("begin requires at least one argument!")
     expressions = expression[1:]
     exps = [evaluate(exp, environment) for exp in expressions]
     return exps[-1] #returns the last result of the begin statement
@@ -124,7 +129,7 @@ def _syntax_quote(expression, enviornment):
     if len(expression) != 2:
         print(expression)
         raise SchemeException("quote expects exactly one argument")
-    
+
     return SchemeNil() if isinstance(expression[1], list) and len(expression[1]) == 0 else expression[1:]
 
 def _make_scheme_bool(cond):

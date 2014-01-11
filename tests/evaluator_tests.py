@@ -60,6 +60,11 @@ def test_higherorder_functions():
     assert_equal(ev.evaluate(expression), SchemeNumber(10))
 
 @with_setup(setup_func)
+def test_lambda_shorthand():
+    expression = rd.parse("(define (add a b) (+ a b)) (add 2 3)")
+    assert_equal(ev.evaluate(expression), SchemeNumber(5))
+
+@with_setup(setup_func)
 def test_enviornments():
     expression = rd.parse("(begin (define b 3) (define fun (lambda (z) b)) (fun 1))")
     assert_equal(ev.evaluate(expression), SchemeNumber(3))
@@ -106,17 +111,17 @@ def test_greater():
     expression = rd.parse("(> 10 5 4 5 2 1)")
     assert_equal(ev.evaluate(expression), SchemeFalse())
 
-@with_setup
+@with_setup(setup_func)
 def test_greater_equals():
-    expression = rd.parse("(> 10 1)")
+    expression = rd.parse("(>= 10 1)")
     assert_equal(ev.evaluate(expression), SchemeTrue())
-    expression = rd.parse("(> 10 5 4 3 2 1)")
+    expression = rd.parse("(>= 10 5 4 3 2 1)")
     assert_equal(ev.evaluate(expression), SchemeTrue())
-    expression = rd.parse("(> 10 5 4 4 2 1)")
+    expression = rd.parse("(>= 10 5 4 4 2 1)")
     assert_equal(ev.evaluate(expression), SchemeTrue())
-    expression = rd.parse("(> 10 5 4 5 2 1)")
+    expression = rd.parse("(>= 10 5 4 5 2 1)")
     assert_equal(ev.evaluate(expression), SchemeFalse())
-    expression = rd.parse("(> 10 10 10 10 10 10)")
+    expression = rd.parse("(>= 10 10 10 10 10 10)")
     assert_equal(ev.evaluate(expression), SchemeTrue())
 
 @with_setup(setup_func)
@@ -218,9 +223,19 @@ def test_let():
     assert_equal(ev.evaluate(expression), SchemeNumber(2))
 
 @with_setup(setup_func)
+def test_let_exception():
+    expression = rd.parse("(let (a))")
+    assert_raises(SchemeException, ev.evaluate, expression)
+
+@with_setup(setup_func)
 def test_shorthand_lambda():
     define_short = rd.parse("(define (test (a b) (+ a b)))")
 
+@with_setup(setup_func)
+def test_syntax_error():
+    expression = rd.parse("(quote 12 23)")
+    assert_raises(SchemeException, ev.evaluate, expression)
+    
 @with_setup(setup_func)
 def test_set_test():
     define_singleton_set = rd.parse("(define singletonSet (lambda (x) (lambda (y) (= y x))))")
@@ -263,11 +278,11 @@ def test_list_eval():
 def test_list_no_exec():
     define_list = rd.parse("""
     (begin
-            (define bar (lambda () (cons 1 2))
-            ((bar))))
+            (define baz (lambda () (cons 1 2)))
+            ((baz))
+    )
     """)
     assert_raises(SchemeException, ev.evaluate, define_list)
-
 
 @with_setup(setup_func)
 def test_Y_combinator():

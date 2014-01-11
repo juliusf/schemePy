@@ -13,9 +13,13 @@ def test_reader_tokenizer():
 
 @with_setup(setup_func)
 def test_reader_parse():
-    assert_equal(rd.parse("(+ 2.0 (+ 1 2))"), [SchemeSymbol('+'), SchemeNumber(2.0), [SchemeSymbol('+'), SchemeNumber(1), SchemeNumber(2)]])
+    assert_equal(rd.parse("(+ 2.0 (+ 1 2))"), [SchemeSymbol('begin'), [SchemeSymbol('+'), SchemeNumber(2.0), [SchemeSymbol('+'), SchemeNumber(1), SchemeNumber(2)]]])
 
 @with_setup(setup_func)
 def test_to_string():
     assert_equal(rd.to_string([SchemeSymbol('+')]), '(+)')
-    assert_equal(rd.to_string([SchemeSymbol('+'), SchemeNumber(2.0), [SchemeSymbol('+'), SchemeNumber(1), SchemeNumber(2)]]), "(+ 2.0 (+ 1 2))") 
+    assert_equal(rd.to_string([SchemeSymbol('+'), SchemeNumber(2.0), [SchemeSymbol('+'), SchemeNumber(1), SchemeNumber(2)]]), "(+ 2.0 (+ 1 2))")
+
+@with_setup(setup_func)
+def test_zero_tokens():
+    assert_raises(SchemeException, rd.parse, "")
