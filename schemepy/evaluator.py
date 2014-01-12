@@ -40,6 +40,7 @@ def evaluate(expression, environment=root_environment):
             'car':_syntax_car,
             'cdr':_syntax_cdr,
             'let':_syntax_let,
+            'set!':_syntax_set,
             'quote': _syntax_quote,
             'exit': _syntax_exit
         }
@@ -79,6 +80,13 @@ def _syntax_define(expression, environment):
         environment.set(var.value, l)
     else:
         environment.set(var.value, evaluate(expr[0], environment))
+
+def _syntax_set(expression, environment):
+    if len(expression) != 3:
+        raise SchemeException("set: set expects exactly 2 arguments: define <variable> <value>.")
+    var, expr = expression[1], expression[2:]
+    environment.set_overwrite(var.value, evaluate(expr[0], environment))
+
 
 def _syntax_lambda(expression, environment):
     if len(expression) != 3:

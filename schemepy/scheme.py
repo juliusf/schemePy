@@ -144,6 +144,8 @@ class SchemeEnvironment:
         else:
             self._dict[key]=value
 
+    def set_overwrite(self, key, value):
+        self._dict[key]=value
 
 class SchemeRootEnviornment(SchemeEnvironment):
     def set(self, key, value):

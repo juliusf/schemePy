@@ -230,6 +230,13 @@ def test_let():
     assert_equal(ev.evaluate(expression), SchemeNumber(2))
 
 @with_setup(setup_func)
+def test_set():
+    expression = rd.parse('(define a "foo")')
+    ev.evaluate(expression)
+    expression = rd.parse('(set! a "bar") a')
+    assert_equal(ev.evaluate(expression), SchemeString("bar"))
+
+@with_setup(setup_func)
 def test_let_exception():
     expression = rd.parse("(let (a))")
     assert_raises(SchemeException, ev.evaluate, expression)
