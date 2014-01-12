@@ -13,3 +13,5 @@ while True:
         print(ev.evaluate(expression))
     except SchemeException as e:
         print(e)
+    except TypeError as e:
+        print(e)
