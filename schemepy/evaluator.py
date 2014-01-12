@@ -19,13 +19,9 @@ builtin_functions["<="] = SchemeProcedure("<=", lambda *args: SchemeTrue() if re
 builtin_functions["and"] = SchemeProcedure("and", lambda *args: _make_scheme_bool( SchemeFalse() not in args ))
 builtin_functions["or"] = SchemeProcedure("or", lambda *args: _make_scheme_bool( SchemeTrue() in args ))
 
-root_environment = SchemeEnvironment()
+root_environment = SchemeRootEnviornment()
 root_environment.update(builtin_functions)
 
-def reset_enviornment():
-    global root_environment
-    root_environment =  SchemeRootEnviornment()
-    root_environment.update(builtin_functions)
 
 def evaluate(expression, environment=root_environment):
     """Evaluates an executable expression"""
@@ -129,10 +125,9 @@ def _syntax_let(expression, enviornment):
 
 def _syntax_quote(expression, enviornment):
     if len(expression) != 2:
-        print(expression)
         raise SchemeException("quote expects exactly one argument")
 
-    return SchemeNil() if isinstance(expression[1], list) and len(expression[1]) == 0 else expression[1:]
+    return SchemeNil() if isinstance(expression[1], list) and len(expression[1]) == 0 else expression[1]
 
 def _syntax_exit(expression, enviornment):
     sys.exit(0)
