@@ -18,6 +18,7 @@ builtin_functions["<="] = SchemeProcedure("<=", lambda *args: SchemeTrue() if re
 
 builtin_functions["and"] = SchemeProcedure("and", lambda *args: _make_scheme_bool( SchemeFalse() not in args ))
 builtin_functions["or"] = SchemeProcedure("or", lambda *args: _make_scheme_bool( SchemeTrue() in args ))
+builtin_functions["not"] = SchemeProcedure("not", lambda *args: _make_scheme_bool( args[0] == SchemeFalse() ))
 
 root_environment = SchemeRootEnviornment()
 root_environment.update(builtin_functions)

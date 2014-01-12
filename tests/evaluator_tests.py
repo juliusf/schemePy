@@ -167,6 +167,13 @@ def test_or():
     assert_equal(ev.evaluate(expression), SchemeFalse())
 
 @with_setup(setup_func)
+def test_not():
+    expression = rd.parse("(not #f)")
+    assert_equal(ev.evaluate(expression), SchemeTrue())
+    expression = rd.parse("(not #t)")
+    assert_equal(ev.evaluate(expression), SchemeFalse())
+
+@with_setup(setup_func)
 def test_if():
     expression = rd.parse("(if (= 3 3) 1 2)")
     assert_equal(ev.evaluate(expression), SchemeNumber(1))
@@ -235,7 +242,7 @@ def test_shorthand_lambda():
 def test_syntax_error():
     expression = rd.parse("(quote 12 23)")
     assert_raises(SchemeException, ev.evaluate, expression)
-    
+
 @with_setup(setup_func)
 def test_set_test():
     define_singleton_set = rd.parse("(define singletonSet (lambda (x) (lambda (y) (= y x))))")
