@@ -21,7 +21,7 @@ class SchemeProcedure(SchemeType):
     def __repr__(self):
         return "<%s:%s>" % (self.__class__.__name__, self.name)
 
-class SchemeString:
+class SchemeString(SchemeType):
     def __init__(self, value):
         self.value = value
         self.type = 'String'

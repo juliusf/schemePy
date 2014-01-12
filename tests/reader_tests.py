@@ -16,6 +16,9 @@ def test_reader_parse():
     assert_equal(rd.parse("(+ 2.0 (+ 1 2))"), [SchemeSymbol('begin'), [SchemeSymbol('+'), SchemeNumber(2.0), [SchemeSymbol('+'), SchemeNumber(1), SchemeNumber(2)]]])
 
 @with_setup(setup_func)
+def test_reader_parse_string():
+    assert_equal(rd.parse('(define a "teststring with whitespace")'), [SchemeSymbol("begin"), [SchemeSymbol("define"), SchemeSymbol("a"), SchemeString("teststring with whitespace")]])
+@with_setup(setup_func)
 def test_to_string():
     assert_equal(rd.to_string([SchemeSymbol('+')]), '(+)')
     assert_equal(rd.to_string([SchemeSymbol('+'), SchemeNumber(2.0), [SchemeSymbol('+'), SchemeNumber(1), SchemeNumber(2)]]), "(+ 2.0 (+ 1 2))")
