@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block body %}
+    <div class="page-header">
+        <h1>Holodeck Scheme REPL</h1>
+        <p class="lead">Hello! I'm a flask application server running a scheme interpreter which has been written in python.</p>
+    </div>
+      <a href="#" class="btn btn-success btn-large" id=run style="margin-bottom:10px"><i class="icon-white icon-play"></i> Evaluate File</a>
+      <a href="#" class="btn btn-success btn-large" id=runDirect style="margin-bottom:10px"><i class="icon-white icon-play"></i> Evaluate Direct Window</a>
+      <div class="row">
+        <div class="col-md-6">
+            <h5>File:</h5>
+        </div>
+        <div class="col-md-6">
+            <h5>Output:</h5>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+            <div style="height: 400px">
+                <div id="editor" style="height: 100%"></div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div style="height: 400px">
+                <textarea id="console" style="height: 100%;" name="console"></textarea>
+            </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+            <h5>Direct Window:</h5>
+        </div>
+      </div>
+    <div class="row" style="height=100px; margin-right: 0px; margin-bottom: 30px">
+        <div class="col-md-12" style="height=100%; margin-right: -15px;">
+            <div id="directWindow" style="height: 100px;"></div>
+        </div>
+    </div>
+
+
+
+      <script src="/static/js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+      <script>
+        var editor = ace.edit("editor");
+        editor.setTheme("ace/theme/monokai");
+        editor.getSession().setMode("ace/mode/scheme");
+
+        var directWindow = ace.edit("directWindow");
+        directWindow.setTheme("ace/theme/monokai");
+        directWindow.getSession().setMode("ace/mode/scheme");
+      </script>
+
+{% endblock %}

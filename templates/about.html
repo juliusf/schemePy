@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="page-header">
+<h1>Holodeck Scheme REPL</h1>
+<p class="lead">Simple Scheme interpreter written in python</p>
+</div>
+<h2>Introduction & Usage</h2>
+For a lecture, I've implemented an interpreter for a subset of the Scheme programming language in python. The sources for the  <a href="https://github.com/juliusf/schemePy">interpreter </a>as well as for the <a href="https://github.com/juliusf/holodeck">web application server</a> are available on my github profile.
+Usage is quite easy: Scheme expressions entered in the text editor labled "File" can be evaluated by clicking on the "Evaluate File" button. Saved variables and functions are lost every time the button is clicked. After a file has been evaluated the values in the enviornment can still be accessed via the Direct Window. Expressions in this window can be evaluated by clicking "Evaluate Direct Window", respectively.
+<h2>Supported Features</h2>
+
+<h3> Supported Scheme Syntax </h3>
+<ul class="list-group">
+  <li class="list-group-item">define</li>
+  <li class="list-group-item">begin</li>
+  <li class="list-group-item">lambda</li>
+  <li class="list-group-item">if</li>
+  <li class="list-group-item">cons</li>
+  <li class="list-group-item">car</li>
+  <li class="list-group-item">cdr</li>
+  <li class="list-group-item">let</li>
+  <li class="list-group-item">set!</li>
+  <li class="list-group-item">quote</li>
+</ul>
+
+For convenience lambda shorthand syntax as well as implicit begin statements and comments (beginning with ";") are supported.
+
+<h3> Builtin Function </h3>
+
+<ul class="list-group">
+  <li class="list-group-item">+<li>
+  <li class="list-group-item">-</li>
+  <li class="list-group-item">&#42;</li>
+  <li class="list-group-item">/</li>
+  <li class="list-group-item">=</li>
+  <li class="list-group-item">></li>
+  <li class="list-group-item">>=</li>
+  <li class="list-group-item"><</li>
+  <li class="list-group-item"><=</li>
+  <li class="list-group-item">and</li>
+  <li class="list-group-item">or</li>
+  <li class="list-group-item">not</li>
+</ul>
+
+{% endblock %}
