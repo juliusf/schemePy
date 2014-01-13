@@ -90,6 +90,11 @@ def test_divide():
     assert_equal(ev.evaluate(expression), SchemeNumber(2))
 
 @with_setup(setup_func)
+def test_modulo():
+    expression = rd.parse("(% 10 9)")
+    assert_equal(ev.evaluate(expression), SchemeNumber(1))
+
+@with_setup(setup_func)
 def test_equals():
     expression = rd.parse("(= 3 3)")
     assert_equal(ev.evaluate(expression), SchemeTrue())

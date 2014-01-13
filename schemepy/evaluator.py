@@ -9,6 +9,7 @@ builtin_functions["+"] = SchemeProcedure("+", lambda *args: reduce(lambda x, y: 
 builtin_functions["-"] = SchemeProcedure("-", lambda *args: reduce(lambda x, y: SchemeNumber(x.value-y.value), args) )
 builtin_functions["*"] = SchemeProcedure("*", lambda *args: reduce(lambda x, y: SchemeNumber(x.value*y.value), args) )
 builtin_functions["/"] = SchemeProcedure("/", lambda *args: reduce(lambda x, y: SchemeNumber(x.value/y.value), args) )
+builtin_functions["%"] = SchemeProcedure("%", lambda *args: reduce(lambda x, y: SchemeNumber(x.value%y.value), args) )
 
 builtin_functions["="] = SchemeProcedure("=", lambda *args: reduce(lambda x, y: SchemeTrue() if (x == SchemeTrue() and y == SchemeTrue() ) else SchemeFalse(), map(lambda x: SchemeFalse() if x != args[0] else SchemeTrue(), args[1:])))
 builtin_functions[">"] = SchemeProcedure(">", lambda *args: SchemeTrue() if reduce(lambda x, y: x + y , map(lambda x: 1 if args[x].value > args[x + 1].value else 0, range(len(args) -1))) == len(args)-1 else SchemeFalse())
