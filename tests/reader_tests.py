@@ -26,3 +26,9 @@ def test_to_string():
 @with_setup(setup_func)
 def test_zero_tokens():
     assert_raises(SchemeException, rd.parse, "")
+
+@with_setup(setup_func)
+def test_comments():
+    assert_equal(rd.parse('''(+ 1 
+        ; test comment with whitespace
+        3)'''), [SchemeSymbol("begin"), [SchemeSymbol("+"), SchemeNumber(1), SchemeNumber(3)]])

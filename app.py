@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, current_app
 import schemepy
 import schemepy.reader as rd
 import schemepy.evaluator as ev
@@ -18,10 +18,13 @@ def evaluate():
     ev = imp.reload(schemepy.evaluator)
     try:
         expression = rd.parse(statement)
+        current_app.logger.error(expression)
         res = ev.evaluate(expression)
     except Exception as e:
+        expression = rd.parse(statement)
         res = e
-    return jsonify(result= str(res))
+    res= "Expression: %s \n Result: %s" %(expression, res)
+    return jsonify(result = res)
 
 @app.route('/_interpretDirect')
 def direct():
@@ -42,4 +45,4 @@ def index():
 def about():
     return render_template('about.html')
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

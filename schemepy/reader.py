@@ -65,10 +65,12 @@ def _to_string_list(list):
 def _to_string_expression(expr):
     return str(expr)
 
-def _preprocess(input):
-    input = re.sub(r";.*\n | \n | \r | \t", " ", input) #remove quotes, new lines, whitespaces and tabs
-    input = re.sub(r"'(.[^\s)]*)", r'(quote \1)', input) #replace ' with quote
-    return "(begin " + input + ")" #implicit multiline evaluation
+def _preprocess(inp):
+    inp = re.sub(r";+.+\n|\n|\r|\t", " ", inp) #remove quotes, new lines, whitespaces and tabs
+    inp = re.sub("'(\(.*\))", r"(quote \1)", inp) #replace '(%foo) with (quote (foo))
+    inp = re.sub("'([^\s]*)", r"(quote \1)", inp) # replace 'foo with (quote foo)
+    print(inp)
+    return "(begin " + inp + ")" #implicit multiline evaluation
 
 
 

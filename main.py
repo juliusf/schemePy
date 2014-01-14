@@ -9,7 +9,7 @@ sys.setrecursionlimit(100000)
 
 while True:
     try:
-        expression = rd.parse(input('>'))
+        expression = rd.parse(sys.stdin.read())
         print(ev.evaluate(expression))
     except SchemeException as e:
         print(e)

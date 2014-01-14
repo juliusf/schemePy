@@ -136,8 +136,17 @@ def _syntax_let(expression, enviornment):
 def _syntax_quote(expression, enviornment):
     if len(expression) != 2:
         raise SchemeException("quote expects exactly one argument")
-
-    return SchemeNil() if isinstance(expression[1], list) and len(expression[1]) == 0 else expression[1]
+    if isinstance(expression[1], list):
+        if len(expression[1]) == 0:
+            return SchemeNil()
+        else:
+            last = SchemeCons(expression[1][-1], SchemeNil())
+            for i in reversed(expression[1][:-2]):
+                last = SchemeCons(i, last)
+            print(last)
+            return last
+    else:
+        return expression[1]
 
 def _syntax_exit(expression, enviornment):
     sys.exit(0)
