@@ -90,8 +90,11 @@ def _syntax_set(expression, environment):
 
 
 def _syntax_lambda(expression, environment):
-    if len(expression) != 3:
-        raise SchemeException("lambda: lambda expects exactly to 2 arguments: lambda <variables> <implementation>")
+    if len(expression) <=2:
+        raise SchemeException("lambda: lambda expects exactly at least 2 arguments: lambda <variables> <implementation>.")
+    if len(expression) > 3: #hack to support implicit multiexpression evaluation in lambdas
+        expression[2] = expression[2:]
+        expression[2].insert(0,SchemeSymbol('begin'))
     vars, expr = expression[1], expression[2]
     return SchemeProcedure('lambda', lambda *args : evaluate(expr, SchemeEnvironment(vars, args, environment)) )
 
@@ -141,9 +144,8 @@ def _syntax_quote(expression, enviornment):
             return SchemeNil()
         else:
             last = SchemeCons(expression[1][-1], SchemeNil())
-            for i in reversed(expression[1][:-2]):
+            for i in reversed(expression[1][:-1]):
                 last = SchemeCons(i, last)
-            print(last)
             return last
     else:
         return expression[1]

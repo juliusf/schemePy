@@ -256,6 +256,13 @@ def test_syntax_error():
     assert_raises(SchemeException, ev.evaluate, expression)
 
 @with_setup(setup_func)
+def test_quote():
+    expression = rd.parse(''''(1 2 ;3)
+        5 ; (2
+        4)''')
+    assert_equal(str(ev.evaluate(expression)),'(1 2 5 4)')
+
+@with_setup(setup_func)
 def test_set_test():
     define_singleton_set = rd.parse("(define singletonSet (lambda (x) (lambda (y) (= y x))))")
     define_contains = rd.parse("(define contains (lambda (set_ y) (set_ y)))")
@@ -334,3 +341,15 @@ def test_iota():
     ev.evaluate(define_iota)
 
     assert_equal(str(ev.evaluate(define_test)), "(9 8 7 6 5 4 3 2 1)")
+
+@with_setup(setup_func)
+def test_advanced_env():
+    define_test =rd.parse("""
+        ((lambda (x)
+            (+((lambda ()
+                (define x 1)
+                x
+            )) x)
+        ) 2)
+""")
+    assert_equal(ev.evaluate(define_test), SchemeNumber(3))
