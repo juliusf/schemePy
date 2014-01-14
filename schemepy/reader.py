@@ -69,7 +69,7 @@ def _preprocess(inp):
     inp = re.sub(r";+.+\n|\n|\r|\t", " ", inp) #remove quotes, new lines, whitespaces and tabs
     inp = re.sub("'(\(.*\))", r"(quote \1)", inp) #replace '(%foo) with (quote (foo))
     inp = re.sub("'([^\s]*)", r"(quote \1)", inp) # replace 'foo with (quote foo)
-    return "(begin " + inp + ")" #implicit multiline evaluation
+    return "(internal_begin " + inp + ")" #implicit multiline evaluation
 
 
 

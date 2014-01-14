@@ -35,6 +35,7 @@ def evaluate(expression, environment=root_environment):
         syntax = {
             'define':_syntax_define,
             'begin':_syntax_begin,
+            'internal_begin': _syntax_internal_begin,
             'lambda':_syntax_lambda,
             'if':_syntax_if,
             'cons':_syntax_cons,
@@ -42,6 +43,7 @@ def evaluate(expression, environment=root_environment):
             'cdr':_syntax_cdr,
             'let':_syntax_let,
             'set!':_syntax_set,
+            'pair?': _syntax_pair,
             'quote': _syntax_quote,
             'exit': _syntax_exit
         }
@@ -67,12 +69,20 @@ def _syntax_begin(expression, environment):
     if len(expression) < 2:
         raise SchemeException("begin requires at least one argument!")
     expressions = expression[1:]
+    env = SchemeEnvironment(None, None, environment)
+    exps = [evaluate(exp, env) for exp in expressions]
+    return exps[-1] #returns the last result of the begin statement
+
+def _syntax_internal_begin(expression, environment):
+    if len(expression) < 2:
+        raise SchemeException("begin requires at least one argument!")
+    expressions = expression[1:]
     exps = [evaluate(exp, environment) for exp in expressions]
     return exps[-1] #returns the last result of the begin statement
 
 def _syntax_define(expression, environment):
-    if len(expression) != 3:
-        raise SchemeException("define: define expects exactly 2 arguments: define <variable> <value>. Got %s instead" % (expression))
+    if len(expression) < 3:
+        raise SchemeException("define: define expects at least 2 arguments: define <variable> <value>.")
     var, expr = expression[1], expression[2:]
     if isinstance(var, list): #shorthand lambda syntax
         var = expression[1][0]
@@ -80,11 +90,13 @@ def _syntax_define(expression, environment):
         l = _syntax_lambda(expression, environment)
         environment.set(var.value, l)
     else:
+        if len(expression) != 3:
+            raise SchemeException("define: define expects exactly 2 arguments: define <variable> <value>. Got %s instead" % (expression))
         environment.set(var.value, evaluate(expr[0], environment))
 
 def _syntax_set(expression, environment):
     if len(expression) != 3:
-        raise SchemeException("set: set expects exactly 2 arguments: define <variable> <value>.")
+        raise SchemeException("set: set expects exactly 2 arguments: set <variable> <value>.")
     var, expr = expression[1], expression[2:]
     environment.set_overwrite(var.value, evaluate(expr[0], environment))
 
@@ -149,6 +161,14 @@ def _syntax_quote(expression, enviornment):
             return last
     else:
         return expression[1]
+
+def _syntax_pair(expression, enviornment):
+    if len(expression) != 2:
+        raise SchemeException("pair? expects exactly one argument!")
+    if isinstance(evaluate(expression[1], enviornment), SchemeCons):
+        return SchemeTrue()
+    else:
+        return SchemeFalse()
 
 def _syntax_exit(expression, enviornment):
     sys.exit(0)

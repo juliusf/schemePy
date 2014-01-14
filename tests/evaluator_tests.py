@@ -266,12 +266,12 @@ def test_quote():
 def test_set_test():
     define_singleton_set = rd.parse("(define singletonSet (lambda (x) (lambda (y) (= y x))))")
     define_contains = rd.parse("(define contains (lambda (set_ y) (set_ y)))")
-    define_test_sets = rd.parse("""(begin
+    define_test_sets = rd.parse("""
         (define s1 (singletonSet 1))
         (define s2 (singletonSet 2))
         (define s3 (lambda (x) (and (>= x 5) (<= x 15))))
         (define s4 (lambda (x) (and (<= x -5) (>= x -15))))
-         )""")
+         """)
 
     test_1 = rd.parse("(contains s1 1)")
     test_2 = rd.parse("(contains s2 2)")
@@ -313,7 +313,7 @@ def test_list_no_exec():
 @with_setup(setup_func)
 def test_Y_combinator():
     define_y = rd.parse("""
-            (begin
+
             (define Y
              (lambda (f)
              ((lambda (x) (x x))
@@ -325,7 +325,7 @@ def test_Y_combinator():
                      (lambda (x)
                        (if (< x 2)
                            1
-                           (* x (f (- x 1)))))))))
+                           (* x (f (- x 1))))))))
 """)
     define_test = rd.parse("(fac 6)")
     ev.evaluate(define_y)
@@ -343,7 +343,7 @@ def test_iota():
     assert_equal(str(ev.evaluate(define_test)), "(9 8 7 6 5 4 3 2 1)")
 
 @with_setup(setup_func)
-def test_advanced_env():
+def test_multiline_expression_lambda():
     define_test =rd.parse("""
         ((lambda (x)
             (+((lambda ()
@@ -353,3 +353,16 @@ def test_advanced_env():
         ) 2)
 """)
     assert_equal(ev.evaluate(define_test), SchemeNumber(3))
+
+@with_setup(setup_func)
+def test_advanced_begin():
+    expression = rd.parse("(begin (begin (define b 2)) b)")
+    assert_raises(SchemeException, ev.evaluate, expression)
+
+    expr = rd.parse("(begin (define b 1) (begin (define b 2)) b)")
+    assert_equal(ev.evaluate(expr), SchemeNumber(1))
+
+@with_setup(setup_func)
+def test_wrong_number_of_args():
+    exp = rd.parse("(define (test x) x) (test 1 2)")
+    assert_raises(SchemeException, ev.evaluate, exp)
