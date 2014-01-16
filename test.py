@@ -1,19 +1,11 @@
-#!/usr/bin/env python3
+
 
 import schemepy.reader as rd
 import schemepy.evaluator as ev
 from schemepy.scheme import *
-import sys
+from schemepy.stream import Stream
 
-sys.setrecursionlimit(100000)
 
-define_test =rd.parse("""
-                                  ((lambda (x)
-                                      (+((lambda ()
-                                          (define x 1)
-                                          x
-                                      )) x)
-                                  ) 2)
-                          """)
-
-print(ev.evaluate(define_test))
+stream = Stream("(+ 2.0 (+ 1 2))")
+foo = rd.parse_new(stream)
+print(foo)

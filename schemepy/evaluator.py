@@ -126,7 +126,6 @@ def _syntax_car(expression, enviornment):
     if len (expression) != 2:
         raise SchemeException("car: car expects exactly 2 arguments: car <cons>")
     cons = evaluate(expression[1], enviornment)
-    print(expression)
     if not isinstance(cons, SchemeCons):
         raise SchemeException("car: car expects a SchemeCons as first parameter. Got a %s instead." % (cons))
     return evaluate(cons.car, enviornment)
@@ -155,10 +154,7 @@ def _syntax_quote(expression, enviornment):
         if len(expression[1]) == 0:
             return SchemeNil()
         else:
-            last = SchemeCons(expression[1][-1], SchemeNil())
-            for i in reversed(expression[1][:-1]):
-                last = SchemeCons(i, last)
-            return last
+            return _list_to_cons(expression[1])
     else:
         return expression[1]
 
@@ -174,4 +170,17 @@ def _syntax_exit(expression, enviornment):
     sys.exit(0)
 def _make_scheme_bool(cond):
     return SchemeTrue() if cond else SchemeFalse()
+
+def _list_to_cons(inp):
+    last = None
+    if isinstance(inp[-1], list):
+        last = SchemeCons(_list_to_cons(inp[-1]),SchemeNil())
+    else:
+        last = SchemeCons(inp[-1],SchemeNil())
+    for i in reversed(inp[:-1]):
+        if isinstance(i, list):
+            last = SchemeCons(_list_to_cons(i), last)
+        else:
+            last = SchemeCons(i, last)
+    return last
 

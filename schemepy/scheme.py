@@ -73,7 +73,7 @@ class SchemeCons(SchemeType):
     def __str__(self):
         ret = "("
         if isinstance(self.car, SchemeCons):
-            ret += self._str_helper()
+            ret += self.car._str_helper()
         else:
             ret +=  str(self.car)
         if isinstance(self.cdr, SchemeNil):
@@ -86,7 +86,7 @@ class SchemeCons(SchemeType):
     def _str_helper(self):
         ret = ""
         if isinstance(self.car, SchemeCons):
-            ret += self._str_helper()
+            ret += "(" + self.car._str_helper()
         else:
             ret +=  str(self.car)
         if isinstance(self.cdr, SchemeNil):

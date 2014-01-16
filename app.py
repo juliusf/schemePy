@@ -4,6 +4,9 @@ import schemepy
 import schemepy.reader as rd
 import schemepy.evaluator as ev
 import imp
+import time
+import sys
+sys.setrecursionlimit(100000)
 
 DEBUG = True
 SECRET_KEY = '$(secret_key)'
@@ -17,13 +20,16 @@ def evaluate():
     statement = request.args.get('statement')
     ev = imp.reload(schemepy.evaluator)
     try:
+        start = time.time()
         expression = rd.parse(statement)
         current_app.logger.error(expression)
         res = ev.evaluate(expression)
+        end = time.time() - start
+        current_app.logger.error(end)
     except Exception as e:
-        expression = rd.parse(statement)
+        expression = rd.passrse(statement)
         res = e
-    res= "Expression: %s \n Result: %s" %(expression, res)
+        res=  str(res)
     return jsonify(result = res)
 
 @app.route('/_interpretDirect')

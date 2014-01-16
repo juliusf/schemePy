@@ -1,6 +1,7 @@
 from schemepy.scheme import *
 import re
 
+
 def _tokenize(input):
     """Tokenizes a given input string"""
     tokens = input.replace("("," ( ").replace(")", " ) ")
@@ -71,5 +72,66 @@ def _preprocess(inp):
     inp = re.sub("'([^\s]*)", r"(quote \1)", inp) # replace 'foo with (quote foo)
     return "(internal_begin " + inp + ")" #implicit multiline evaluation
 
+
+def parse_new(stream):
+    while(not stream.is_EOF()):
+        stream.skip_whitespace()
+        c = stream.peek()
+
+        if c == '(':
+            return parse_list(stream)
+
+        elif c == '+' or c == '-' or (c >= '0' and c<= '9'):
+            return parse_number(stream)
+
+        elif c == '"':
+            return parse_string(stream)
+        elif c == "'":
+            return parse_quote(stream)
+        else:
+            return parse_symbol(stream)
+
+def parse_list(stream):
+    l = []
+    stream.skip(1) #skip (
+    stream.skip_whitespace()
+    while stream.is_EOF() == False and stream.peek() != ')':
+        l.append(parse_new(stream))
+        stream.skip_whitespace()
+    if stream.is_EOF():
+        raise SchemeException("Missing )!")
+    if not stream.is_EOF(1): #true for the last input
+        stream.skip(1) #skip )
+    return l
+
+def parse_number(stream):
+    c = stream.read_until_whitespace()
+    if len(c) == 1 and (c == "+" or c == "-"):
+        return SchemeSymbol(c)
+    else:
+        try:
+            return SchemeNumber(int(c))
+        except ValueError:
+            try:
+                return SchemeNumber(float(c))
+            except ValueError:
+                raise SchemeException('%s is a malformed number!' % (c) )
+
+def parse_string(stream):
+    stream.skip(1)
+    def cond(arg, s):
+        if arg == '"':
+            return False
+        else:
+            return True
+    return SchemeString(stream.read_unitil_cond( cond ))
+
+
+def parse_quote(stream):
+    stream.skip(1)
+    return [SchemeSymbol('quote'), parse_new(stream)]
+
+def parse_symbol(stream):
+    return SchemeSymbol(stream.read_until_whitespace)
 
 
