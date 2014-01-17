@@ -346,7 +346,7 @@ def test_iota():
 def test_multiline_expression_lambda():
     define_test =rd.parse("""
         ((lambda (x)
-            (+((lambda ()
+            (+ ((lambda ()
                 (define x 1)
                 x
             )) x)

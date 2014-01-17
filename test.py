@@ -6,6 +6,6 @@ from schemepy.scheme import *
 from schemepy.stream import Stream
 
 
-stream = Stream("(+ 2.0 (+ 1 2))")
-foo = rd.parse_new(stream)
+stream = Stream('(define (add a b) (+ a b)) (add 2 3)')
+foo = rd._parse_helper(stream)
 print(foo)

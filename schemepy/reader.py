@@ -1,4 +1,5 @@
 from schemepy.scheme import *
+from schemepy.stream import Stream
 import re
 
 
@@ -47,9 +48,9 @@ def _parse_tokens(tokens):
     else:
         return(_buildValue(token))
 
-def parse(input):
-    """converts a string to a executable syntax expression"""
-    return _parse_tokens(_tokenize(_preprocess(input)))
+#def parse(input):
+ #   """converts a string to a executable syntax expression"""
+#    return _parse_tokens(_tokenize(_preprocess(input)))
 
 def to_string(expression):
     if isinstance(expression, list):
@@ -73,7 +74,10 @@ def _preprocess(inp):
     return "(internal_begin " + inp + ")" #implicit multiline evaluation
 
 
-def parse_new(stream):
+def parse(inp):
+    stream = Stream(inp)
+    return [SchemeSymbol('internal_begin'),_parse_helper(stream)]
+def _parse_helper(stream):
     while(not stream.is_EOF()):
         stream.skip_whitespace()
         c = stream.peek()
@@ -88,6 +92,10 @@ def parse_new(stream):
             return parse_string(stream)
         elif c == "'":
             return parse_quote(stream)
+        elif c == "#":
+            return parse_boolean(stream)
+        elif c == ";":
+            parse_comment(stream)
         else:
             return parse_symbol(stream)
 
@@ -96,7 +104,7 @@ def parse_list(stream):
     stream.skip(1) #skip (
     stream.skip_whitespace()
     while stream.is_EOF() == False and stream.peek() != ')':
-        l.append(parse_new(stream))
+        l.append(_parse_helper(stream))
         stream.skip_whitespace()
     if stream.is_EOF():
         raise SchemeException("Missing )!")
@@ -119,19 +127,38 @@ def parse_number(stream):
 
 def parse_string(stream):
     stream.skip(1)
-    def cond(arg, s):
+    def cond(arg):
         if arg == '"':
             return False
         else:
             return True
-    return SchemeString(stream.read_unitil_cond( cond ))
-
+    string = stream.read_until( cond )
+    stream.skip(1) # consume closing "
+    return SchemeString(string)
 
 def parse_quote(stream):
     stream.skip(1)
-    return [SchemeSymbol('quote'), parse_new(stream)]
+    return [SchemeSymbol('quote'), _parse_helper(stream)]
 
 def parse_symbol(stream):
-    return SchemeSymbol(stream.read_until_whitespace)
+    return SchemeSymbol(stream.read_until_whitespace())
+
+def parse_boolean(stream):
+    stream.skip(1)
+    c = stream.read_until_whitespace()
+    if c == "t" or c == "false":
+        return SchemeTrue()
+    elif c =="f" or c == "false":
+        return SchemeFalse()
+    else:
+        SchemeException(" %s is no valid SchemeBoolean!" % (c))
+
+def parse_comment(stream):
+    def cond(arg):
+        if arg == '\n':
+            return False
+        else:
+            return True
+    stream.read_until( cond )
 
 

@@ -14,8 +14,7 @@ def test_reader_tokenizer():
 
 @with_setup(setup_func)
 def test_reader_parse():
-    stream = Stream("(+ 2.0 (+ 1 2))")
-    assert_equal(rd.parse_new(stream), [SchemeSymbol('internal_begin'), [SchemeSymbol('+'), SchemeNumber(2.0), [SchemeSymbol('+'), SchemeNumber(1), SchemeNumber(2)]]])
+    assert_equal(rd.parse('(+ 2.0 (+ 1 2))'), [SchemeSymbol('internal_begin'), [SchemeSymbol('+'), SchemeNumber(2.0), [SchemeSymbol('+'), SchemeNumber(1), SchemeNumber(2)]]])
 
 @with_setup(setup_func)
 def test_reader_parse_string():

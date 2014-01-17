@@ -31,7 +31,7 @@ class Stream(object):
 
     def read_until(self, cond):
         offset = 0
-        while cond(self.data[self.i+offset], self.data[self.i:self.i+offset]):
+        while cond(self.data[self.i + offset]) == True:
             offset += 1
         local_ret = self.data[self.i:self.i+offset]
         self.i += offset
