@@ -8,9 +8,6 @@ import schemepy.reader as rd
 
 def setup_func():
     ev = imp.reload(schemepy)
-@with_setup(setup_func)
-def test_reader_tokenizer():
-    assert_equal(rd._tokenize("(1 2 3)"), ['(', '1', '2', '3', ')'])
 
 @with_setup(setup_func)
 def test_reader_parse():
@@ -33,3 +30,4 @@ def test_comments():
     assert_equal(rd.parse('''(+ 1 
         ; test comment with whitespace
         3)'''), [SchemeSymbol("internal_begin"), [SchemeSymbol("+"), SchemeNumber(1), SchemeNumber(3)]])
+

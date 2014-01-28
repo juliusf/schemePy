@@ -1,56 +1,5 @@
 from schemepy.scheme import *
 from schemepy.stream import Stream
-import re
-
-
-def _tokenize(input):
-    """Tokenizes a given input string"""
-    tokens = input.replace("("," ( ").replace(")", " ) ")
-    tokens = re.split('("[^"]+"|[^"\s]+)', tokens)
-    tokens = list( filter(lambda i: not ( re.search('^\s*$',i) or i == '') , tokens) )
-    if len(tokens) == 3:
-        raise SchemeException("Unexpected EOF")
-
-    return tokens
-
-
-
-def _buildValue(value):
-    if value == '#t':
-        return SchemeTrue()
-    elif value == '#f':
-        return SchemeFalse()
-    else:
-        try:
-            return SchemeNumber(int(value))
-        except ValueError:
-            try:
-                return SchemeNumber(float(value))
-            except ValueError:
-                if(value[0] == '"'):
-                    return SchemeString(value[1:-1])
-                else:
-                    return SchemeSymbol(value)
-
-def _parse_tokens(tokens):
-    """generates executable syntax expression from a list of tokens"""
-    if len(tokens) == 0:
-        raise SchemeException("Unexpected EOF")
-    token = tokens.pop(0)
-    if token == "(":
-        values = []
-        while len(tokens) > 0 and tokens[0] != ')':
-            values.append(_parse_tokens(tokens))
-        if len(tokens) == 0:
-            raise SchemeException("Unexpected EOF")
-        tokens.pop(0)
-        return values
-    else:
-        return(_buildValue(token))
-
-#def parse(input):
- #   """converts a string to a executable syntax expression"""
-#    return _parse_tokens(_tokenize(_preprocess(input)))
 
 def to_string(expression):
     if isinstance(expression, list):
@@ -67,16 +16,15 @@ def _to_string_list(list):
 def _to_string_expression(expr):
     return str(expr)
 
-def _preprocess(inp):
-    inp = re.sub(r";+.+\n|\n|\r|\t", " ", inp) #remove quotes, new lines, whitespaces and tabs
-    inp = re.sub("'(\(.*\))", r"(quote \1)", inp) #replace '(%foo) with (quote (foo))
-    inp = re.sub("'([^\s]*)", r"(quote \1)", inp) # replace 'foo with (quote foo)
-    return "(internal_begin " + inp + ")" #implicit multiline evaluation
-
 
 def parse(inp):
-    stream = Stream(inp)
-    return [SchemeSymbol('internal_begin'),_parse_helper(stream)]
+    if not (inp.isspace() or inp == ""):
+        stream = Stream(inp)
+        return _parse_helper(stream)
+    else:
+        raise SchemeException("Unexpected EOF!")
+
+
 def _parse_helper(stream):
     while(not stream.is_EOF()):
         stream.skip_whitespace()
@@ -137,7 +85,7 @@ def parse_string(stream):
     return SchemeString(string)
 
 def parse_quote(stream):
-    stream.skip(1)
+    stream.skip(1) #consume ;
     return [SchemeSymbol('quote'), _parse_helper(stream)]
 
 def parse_symbol(stream):

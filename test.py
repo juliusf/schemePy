@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 
 
 import schemepy.reader as rd
@@ -6,6 +7,6 @@ from schemepy.scheme import *
 from schemepy.stream import Stream
 
 
-stream = Stream('(define (add a b) (+ a b)) (add 2 3)')
-foo = rd._parse_helper(stream)
+inp = '(define (add a b) (+ a b)) (add 2 3)'
+foo = rd.parse(inp)
 print(foo)

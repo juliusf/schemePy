@@ -3,7 +3,7 @@ class Stream(object):
     """docstring for ClassName"""
     def __init__(self, data):
         super(Stream, self).__init__()
-        self.data = data
+        self.data = "(internal_begin " + data + ")"
         self.i = 0
 
     def peek(self):
