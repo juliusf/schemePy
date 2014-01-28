@@ -12,10 +12,11 @@ class SchemeType:
         return "<%s:%s>" % (self.__class__.__name__, self.value)
 
 class SchemeProcedure(SchemeType):
-    def __init__(self, name, impl):
+    def __init__(self, name, impl, lenArgs = None):
         self.name = name
         self.impl = impl
         self.type = "Procedure"
+        self.lenArgs = lenArgs
     def __str__(self):
         return '<Procedure:%s>' % self.name
     def __repr__(self):

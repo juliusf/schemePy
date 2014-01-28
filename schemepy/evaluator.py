@@ -57,6 +57,8 @@ def evaluate(expression, environment=root_environment):
             exps = [evaluate(exp, environment) for exp in expression[1:]] #recursively call evaluate for every exp in expression
             procedure = evaluate(to_execute, environment) #get SchemeProcedure object
             if isinstance(procedure, SchemeProcedure):
+                if procedure.lenArgs != None and procedure.lenArgs != len(exps):
+                    raise SchemeException("Invalid Number of Arguments Exception! Expected %s args but got %s" % (procedure.lenArgs, len(exps)))
                 return procedure.impl(*exps) # call procedure with params
             else:
                 raise SchemeException("%s is not a procedure" % (procedure))
@@ -108,7 +110,7 @@ def _syntax_lambda(expression, environment):
         expression[2] = expression[2:]
         expression[2].insert(0,SchemeSymbol('begin'))
     vars, expr = expression[1], expression[2]
-    return SchemeProcedure('lambda', lambda *args : evaluate(expr, SchemeEnvironment(vars, args, environment)) )
+    return SchemeProcedure('lambda', lambda *args : evaluate(expr, SchemeEnvironment(vars, args, environment)), len(vars) )
 
 def _syntax_if(expression, environment):
     if len(expression) != 4:
