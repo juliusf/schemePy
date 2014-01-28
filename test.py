@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-
-
-import schemepy.reader as rd
-import schemepy.evaluator as ev
+from nose.tools import *
+import schemepy
+import imp
 from schemepy.scheme import *
-from schemepy.stream import Stream
-
-
-inp = '(define (add a b) (+ a b)) (add 2 3)'
-foo = rd.parse(inp)
+import schemepy.evaluator as ev
+import schemepy.reader as rd
+import schemepy.transpiler as tr
+expr = rd.parse("(+ 3 2 (+ 3 2))")
+foo = tr.transpile(expr)
 print(foo)
