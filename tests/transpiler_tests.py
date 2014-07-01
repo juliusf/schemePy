@@ -39,4 +39,4 @@ def test_begin():
 def test_simple_if():
     expr = rd.parse('(if (< 3 2) #t #f)')
     foo = tr.transpile(expr)
-    assert_equal(tr.transpile(expr), 'if 3 < 2\n:\n    True\nelse:\n    False\n\n')
+    assert_equal(tr.transpile(expr), 'if 3 < 2:\n    True\nelse:\n    False\n\n')
