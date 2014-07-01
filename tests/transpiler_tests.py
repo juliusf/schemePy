@@ -6,11 +6,12 @@ import schemepy.evaluator as ev
 import schemepy.reader as rd
 import schemepy.transpiler as tr
 
+
 def setup_func():
     ev = imp.reload(schemepy)
 
 @with_setup(setup_func)
-def test_basic_arithmetics():
+def test_basic_arithmetic():
     expr = rd.parse("(+ 3 2)")
     assert_equal(tr.transpile(expr), "3 + 2\n")
 
@@ -30,6 +31,12 @@ def test_basic_arithmetics():
 
 
 @with_setup(setup_func)
+def test_begin():
+    expr = rd.parse("(begin (+ 3 2) (+ 1 2)")
+    assert_equal(tr.transpile(expr), "3 + 2\n1 + 2\n\n")
+
+@with_setup(setup_func)
 def test_simple_if():
     expr = rd.parse('(if (< 3 2) #t #f)')
-    assert_equal(exec(tr.transpile(expr)), False)
+    foo = tr.transpile(expr)
+    assert_equal(tr.transpile(expr), 'if 3 < 2\n:\n    True\nelse:\n    False\n\n')
