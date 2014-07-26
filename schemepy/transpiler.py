@@ -44,7 +44,7 @@ def _transpile(expression):
             elif expression[0].value in types:
                 return types[expression[0].value](expression)
         else:
-            return expression.value
+            return _indent() + expression.value
 
 
 def _transpile_begin(expression):
@@ -55,26 +55,29 @@ def _transpile_begin(expression):
 
 
 def _transpile_define(expression):
-    pass
+    if len(expression) != 3:
+        raise SchemeException("Too few arguments passed to define!")
+    ret = _indent() + str(expression[1]) + " = " + str(expression[2])
+    return ret
 
 
 def _transpile_if(expression):
     if not isinstance(expression, list):
         raise SchemeException("Syntax Error! if expects a list of arguments")
     if len(expression) < 3 or len(expression) > 4:
-        raise SchemeException("Two few arguments passed to if. if expects at least 2 arguments. You have given me: %s" % len(expression))
+        raise SchemeException("Too few arguments passed to if. if expects at least 2 arguments. You have given me: %s" % len(expression))
 
     ret = _indent() + "if "
     ret += _transpile(expression[1])
     ret += ":\n"
     _push_indent()
-    ret += _indent() + _transpile(expression[2])
+    ret += _transpile(expression[2])
     _pop_indent()
     ret += "\n"
     if len(expression) == 4:
         ret += _indent() + "else:\n"
         _push_indent()
-        ret += _indent() + _transpile(expression[3])
+        ret +=  _transpile(expression[3])
         _pop_indent()
         ret += "\n"
     return ret
