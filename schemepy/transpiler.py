@@ -1,8 +1,8 @@
 from schemepy.scheme import *
-
+import re
 types = {}
 indentation_level = 0
-
+functions = ""
 
 def transpile(expression):
     global types
@@ -10,6 +10,7 @@ def transpile(expression):
         'begin': _transpile_begin,
         'internal_begin': _transpile_begin,
         'define': _transpile_define,
+        'lambda': _transpile_lambda,
         '+': _transpile_plus,
         '-': _transpile_minus,
         '*': _transpile_times,
@@ -17,8 +18,9 @@ def transpile(expression):
         '<': _transpile_less,
         'if': _transpile_if
     }
-
-    return _transpile(expression)
+    program = _transpile(expression)
+    program = re.sub(r'(?<=\S)[ ]{2,}', ' ', program)  # cleanup unneeded whitespaces
+    return program
 
 
 def _indent():
@@ -44,7 +46,7 @@ def _transpile(expression):
             elif expression[0].value in types:
                 return types[expression[0].value](expression)
         else:
-            return _indent() + expression.value
+            return _indent() + str(expression.value)
 
 
 def _transpile_begin(expression):
@@ -57,7 +59,7 @@ def _transpile_begin(expression):
 def _transpile_define(expression):
     if len(expression) != 3:
         raise SchemeException("Too few arguments passed to define!")
-    ret = _indent() + str(expression[1]) + " = " + str(expression[2])
+    ret = _indent() + str(expression[1]) + " = " + str(_transpile(expression[2]))
     return ret
 
 
@@ -82,6 +84,9 @@ def _transpile_if(expression):
         ret += "\n"
     return ret
 
+
+def _transpile_lambda(expression):
+    pass
 
 def _transpile_operator(expression, operator):
     ret = ""

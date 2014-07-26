@@ -17,7 +17,7 @@ class SchemeProcedure(SchemeType):
         self.impl = impl
         self.type = "Procedure"
         self.lenArgs = lenArgs
-        self.value = name #needed for transpiler
+        self.value = name # needed for transpiler
     def __str__(self):
         return '<Procedure:%s>' % self.name
     def __repr__(self):

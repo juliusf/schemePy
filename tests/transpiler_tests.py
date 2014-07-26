@@ -48,3 +48,4 @@ def test_simple_define():
 
     expr = rd.parse('(if (< 3 2) (define x 1) (define x 2))')
     assert_equal(tr.transpile(expr), 'if 3 < 2:\n    x = 1\nelse:\n    x = 2\n\n')
+    exec(tr.transpile(expr)) # invalid syntax would cause an exception!
