@@ -8,8 +8,10 @@ class SchemeType:
             return False
         else:
             return True
+
     def __repr__(self):
         return "<%s:%s>" % (self.__class__.__name__, self.value)
+
 
 class SchemeProcedure(SchemeType):
     def __init__(self, name, impl, lenArgs = None):

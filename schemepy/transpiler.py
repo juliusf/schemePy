@@ -1,8 +1,9 @@
-from schemepy.scheme import *
+from schemepy.transpilerState import *
 import re
 types = {}
 indentation_level = 0
 functions = ""
+
 
 def transpile(expression):
     global types
@@ -18,107 +19,93 @@ def transpile(expression):
         '<': _transpile_less,
         'if': _transpile_if
     }
-    program = _transpile(expression)
+    state = TranspilerState()
+    program = _transpile(expression, state)
     program = re.sub(r'(?<=\S)[ ]{2,}', ' ', program)  # cleanup unneeded whitespaces
     return program
 
 
-def _indent():
-    return indentation_level * 4 * " "
-
-
-def _push_indent():
-    global indentation_level
-    indentation_level += 1
-
-
-def _pop_indent():
-    global indentation_level
-    indentation_level -= 1
-    if indentation_level < 0:
-        raise SchemeException("Can't pop indentation_level.")
-
-
-def _transpile(expression):
+def _transpile(expression, state):
         if isinstance(expression, list):
             if isinstance(expression[0], list):
-                return _transpile(expression[0])
+                return _transpile(expression[0], state)
             elif expression[0].value in types:
-                return types[expression[0].value](expression)
+                return types[expression[0].value](expression, state)
         else:
-            return _indent() + str(expression.value)
+            return state.indent() + str(expression.value)
 
 
-def _transpile_begin(expression):
+def _transpile_begin(expression, state):
     ret = ""
     for token in expression[1:]:
-        ret += "%s\n" % (_transpile(token))
-    return _indent() + ret
+        ret += "%s\n" % (_transpile(token, state))
+    return state.indent() + ret
 
 
-def _transpile_define(expression):
+def _transpile_define(expression, state):
     if len(expression) != 3:
         raise SchemeException("Too few arguments passed to define!")
-    ret = _indent() + str(expression[1]) + " = " + str(_transpile(expression[2]))
+    ret = state.indent() + str(expression[1]) + " = " + str(_transpile(expression[2], state))
     return ret
 
 
-def _transpile_if(expression):
+def _transpile_if(expression, state):
     if not isinstance(expression, list):
         raise SchemeException("Syntax Error! if expects a list of arguments")
     if len(expression) < 3 or len(expression) > 4:
         raise SchemeException("Too few arguments passed to if. if expects at least 2 arguments. You have given me: %s" % len(expression))
 
-    ret = _indent() + "if "
-    ret += _transpile(expression[1])
+    ret = state.indent() + "if "
+    ret += _transpile(expression[1], state)
     ret += ":\n"
-    _push_indent()
-    ret += _transpile(expression[2])
-    _pop_indent()
+    state.push_indent()
+    ret += _transpile(expression[2], state)
+    state.pop_indent()
     ret += "\n"
     if len(expression) == 4:
-        ret += _indent() + "else:\n"
-        _push_indent()
-        ret +=  _transpile(expression[3])
-        _pop_indent()
+        ret += state.indent() + "else:\n"
+        state.push_indent()
+        ret += _transpile(expression[3], state)
+        state.pop_indent()
         ret += "\n"
     return ret
 
 
-def _transpile_lambda(expression):
+def _transpile_lambda(expression, state):
     pass
 
-def _transpile_operator(expression, operator):
+
+def _transpile_operator(expression, operator, state):
     ret = ""
     if len(expression) < 3:
         raise SchemeException("%s needs at least 2 parameters! You have given me: %s" %(operator, len(expression)))
     if isinstance(expression[1], list):
-        ret += "( %s )" % (_transpile(expression[1]))
+        ret += "( %s )" % (_transpile(expression[1], state))
     else:
         ret += "%s" % expression[1].value
     for token in expression[2:]:
         if isinstance(token, list):
-            ret += " %s ( %s )" % (operator, _transpile(token))
+            ret += " %s ( %s )" % (operator, _transpile(token, state))
         else:
             ret += " %s %s" % (operator, token.value)
-    return _indent() + ret
+    return state.indent() + ret
 
 
-def _transpile_plus(expression):
-    return _transpile_operator(expression, "+")
+def _transpile_plus(expression, state):
+    return _transpile_operator(expression, "+", state)
 
 
-def _transpile_minus(expression):
-    return _transpile_operator(expression, "-")
+def _transpile_minus(expression, state):
+    return _transpile_operator(expression, "-", state)
 
 
-def _transpile_times(expression,):
-    return _transpile_operator(expression, '*')
+def _transpile_times(expression, state):
+    return _transpile_operator(expression, '*', state)
 
 
-def _transpile_divided(expression):
-    return _transpile_operator(expression, '/')
+def _transpile_divided(expression, state):
+    return _transpile_operator(expression, '/', state)
 
 
-def _transpile_less(expression):
-    return _transpile_operator(expression, "<")
+def _transpile_less(expression, state):
+    return _transpile_operator(expression, "<", state)
