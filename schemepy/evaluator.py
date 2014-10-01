@@ -24,6 +24,8 @@ builtin_functions["not"] = SchemeProcedure("not", lambda *args: _make_scheme_boo
 root_environment = SchemeRootEnviornment()
 root_environment.update(builtin_functions)
 
+def get_root_environment():
+    return root_environment
 
 def evaluate(expression, environment=root_environment):
     """Evaluates an executable expression"""
