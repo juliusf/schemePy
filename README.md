@@ -6,8 +6,8 @@ Installation Notes
 
 schemePy with the holodeck webfrontend (`app.py`)requires python version 3.4 to be installed. It does not work with python2.7 or below!
 
-  $ python3 --version
-  Python 3.4.1
+    $ python3 --version
+    Python 3.4.1
 
 Sadly, Debian based software repositories currently only provide binaries for python 3.3. This is enough to run the schemepy repl (`repl.py`).
 
@@ -16,11 +16,11 @@ Afterwards you need to install the flask framework for python3:
 
 If you are using an virtualenv
 
-  python3 -m pip install flask
+    python3 -m pip install flask
 
 otherwise:
 
-  sudo python3 -m pip install flask
+    sudo python3 -m pip install flask
 
 
 
