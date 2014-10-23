@@ -149,9 +149,16 @@ class SchemeEnvironment:
             self._dict[key]=value
 
     def set_overwrite(self, key, value):
-        self._dict[key]=value
+        if key in self._dict:
+            self._dict[key] = value
+        else:
+            self.parentEnv.set_overwrite(key, value)
 
 class SchemeRootEnviornment(SchemeEnvironment):
     def set(self, key, value):
             self._dict[key]=value
-
+    def set_overwrite(self, key, value):
+        if key in self._dict:
+            self._dict[key] = value
+        else:
+            raise SchemeException("%s has not been definied yet!" % (key))
