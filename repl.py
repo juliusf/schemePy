@@ -3,7 +3,6 @@
 import schemepy.reader as rd
 import schemepy.evaluator as ev
 from schemepy.scheme import *
-import schemepy.transpiler as tr
 import sys
 
 sys.setrecursionlimit(100000)
